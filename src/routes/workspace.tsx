@@ -11,8 +11,8 @@ import {
 export const Route = createFileRoute("/workspace")({
   head: () => ({
     meta: [
-      { title: "Workspace — ShopList" },
-      { name: "description", content: "Build and manage your active shopping list." },
+      { title: "הרשימה שלי — רשימת קניות" },
+      { name: "description", content: "בנו ונהלו את רשימת הקניות הפעילה שלכם." },
     ],
   }),
   component: Workspace,
@@ -54,12 +54,12 @@ function Workspace() {
 
   const finish = () => {
     if (items.length === 0) return;
-    const listName = window.prompt("Name this shopping list:", new Date().toLocaleDateString());
+    const listName = window.prompt("איך לקרוא לרשימה הזו?", new Date().toLocaleDateString("he-IL"));
     if (listName === null) return;
     const history = loadHistory();
     history.unshift({
       id: crypto.randomUUID(),
-      name: listName.trim() || "Untitled",
+      name: listName.trim() || "ללא שם",
       items,
       savedAt: Date.now(),
     });
@@ -73,11 +73,11 @@ function Workspace() {
     <section>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Shopping Workspace</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">הרשימה שלי</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {items.length === 0
-              ? "Your list is empty. Add an item to begin."
-              : `${remaining} of ${items.length} item${items.length === 1 ? "" : "s"} remaining`}
+              ? "הרשימה ריקה. הוסיפו פריט כדי להתחיל."
+              : `נשארו ${remaining} מתוך ${items.length} פריטים`}
           </p>
         </div>
         <div className="flex gap-2">
@@ -86,14 +86,14 @@ function Workspace() {
             disabled={items.length === 0}
             className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
           >
-            Clear
+            ניקוי
           </button>
           <button
             onClick={finish}
             disabled={items.length === 0}
             className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
           >
-            Finish & Save
+            סיום ושמירה
           </button>
         </div>
       </div>
@@ -105,7 +105,7 @@ function Workspace() {
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Apples"
+          placeholder="לדוגמה: תפוחים"
           className="flex-1 min-w-[180px] rounded-md bg-background px-3 py-2 text-sm outline-none border border-input focus:border-ring"
         />
         <input
@@ -114,12 +114,13 @@ function Workspace() {
           value={qty}
           onChange={(e) => setQty(parseInt(e.target.value) || 1)}
           className="w-20 rounded-md bg-background px-3 py-2 text-sm outline-none border border-input focus:border-ring"
+          aria-label="כמות"
         />
         <button
           type="submit"
           className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
-          Add
+          הוספה
         </button>
       </form>
 
@@ -134,6 +135,7 @@ function Workspace() {
               checked={item.done}
               onChange={() => toggle(item.id)}
               className="h-4 w-4 cursor-pointer accent-foreground"
+              aria-label={`סימון ${item.name}`}
             />
             <span
               className={`flex-1 text-sm ${
@@ -147,7 +149,7 @@ function Workspace() {
               onClick={() => remove(item.id)}
               className="text-xs text-muted-foreground hover:text-destructive transition-colors"
             >
-              Remove
+              הסרה
             </button>
           </li>
         ))}
