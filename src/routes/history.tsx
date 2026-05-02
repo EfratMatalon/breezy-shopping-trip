@@ -5,8 +5,8 @@ import { loadHistory, saveHistory, type ShoppingList } from "../lib/shopping";
 export const Route = createFileRoute("/history")({
   head: () => ({
     meta: [
-      { title: "History — ShopList" },
-      { name: "description", content: "Review your previously saved shopping lists." },
+      { title: "היסטוריה — רשימת קניות" },
+      { name: "description", content: "צפו ברשימות הקניות הקודמות שלכם." },
     ],
   }),
   component: History,
@@ -22,13 +22,14 @@ function History() {
   }, []);
 
   const remove = (id: string) => {
+    if (!confirm("למחוק את הרשימה הזו?")) return;
     const next = lists.filter((l) => l.id !== id);
     setLists(next);
     saveHistory(next);
   };
 
   const clearAll = () => {
-    if (!confirm("Delete all history?")) return;
+    if (!confirm("למחוק את כל ההיסטוריה?")) return;
     setLists([]);
     saveHistory([]);
   };
@@ -39,11 +40,11 @@ function History() {
     <section>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">History</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">היסטוריה</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {lists.length === 0
-              ? "No saved lists yet."
-              : `${lists.length} saved list${lists.length === 1 ? "" : "s"}`}
+              ? "אין עדיין רשימות שמורות."
+              : `${lists.length} רשימות שמורות`}
           </p>
         </div>
         {lists.length > 0 && (
@@ -51,7 +52,7 @@ function History() {
             onClick={clearAll}
             className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent"
           >
-            Clear all
+            מחיקת הכל
           </button>
         )}
       </div>
@@ -59,13 +60,13 @@ function History() {
       {lists.length === 0 ? (
         <div className="mt-16 rounded-lg border border-dashed border-border p-12 text-center">
           <p className="text-sm text-muted-foreground">
-            Finish a list in the workspace to see it here.
+            סיימו רשימה ושמרו אותה כדי שתופיע כאן.
           </p>
           <Link
             to="/workspace"
             className="mt-4 inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
-            Go to Workspace
+            לרשימה שלי
           </Link>
         </div>
       ) : (
@@ -78,15 +79,14 @@ function History() {
                   <div>
                     <h2 className="text-base font-semibold">{list.name}</h2>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {new Date(list.savedAt).toLocaleString()} · {done}/{list.items.length}{" "}
-                      completed
+                      {new Date(list.savedAt).toLocaleString("he-IL")} · סומנו {done} מתוך {list.items.length}
                     </p>
                   </div>
                   <button
                     onClick={() => remove(list.id)}
                     className="text-xs text-muted-foreground hover:text-destructive transition-colors"
                   >
-                    Delete
+                    מחיקה
                   </button>
                 </div>
                 <ul className="mt-4 grid gap-1 sm:grid-cols-2">
