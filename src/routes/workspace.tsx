@@ -140,7 +140,7 @@ function Workspace() {
       </form>
 
       {/* Categories */}
-      <div className="mt-4 space-y-2">
+      <div className="mt-5 space-y-3">
         {CATEGORY_ORDER.map((category) => {
           const products = productsByCategory.get(category) ?? [];
           if (isSearching && products.length === 0) return null;
@@ -153,13 +153,13 @@ function Workspace() {
           return (
             <div
               key={category}
-              className="overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-sm"
+              className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all hover:shadow-md"
             >
               <button
                 type="button"
                 onClick={() => toggleCategory(category)}
                 style={{ backgroundColor: tint?.bg }}
-                className="flex w-full items-center justify-between px-4 py-3 text-right transition-colors hover:brightness-95"
+                className="flex w-full items-center justify-between px-4 py-3.5 text-right transition-all hover:brightness-95"
                 aria-expanded={isOpen}
               >
                 <div className="flex items-center gap-2">
@@ -172,13 +172,19 @@ function Workspace() {
                     {products.length} מוצרים
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   {selectedInCat > 0 && (
                     <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
                       {selectedInCat}
                     </span>
                   )}
-                  <span className="text-sm font-semibold">{category}</span>
+                  <span className="text-base font-semibold">{category}</span>
+                  <span
+                    className="flex h-9 w-9 items-center justify-center rounded-xl bg-background/70 text-lg shadow-sm ring-1 ring-border/50"
+                    aria-hidden
+                  >
+                    {tint?.icon ?? "🛒"}
+                  </span>
                 </div>
               </button>
               {isOpen && (
