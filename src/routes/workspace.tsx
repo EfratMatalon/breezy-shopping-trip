@@ -147,12 +147,30 @@ function Workspace() {
         </div>
       </form>
 
-      {/* Categories grid */}
-      <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {CATEGORY_ORDER.map((category) => {
+      {/* Categories grid with inline expansion */}
+      {(() => {
+        const visibleCategories = CATEGORY_ORDER.filter((c) => {
+          const products = productsByCategory.get(c) ?? [];
+          return !(isSearching && products.length === 0);
+        });
+
+        const openIndex = isSearching
+          ? -1
+          : openCategory
+            ? visibleCategories.indexOf(openCategory)
+            : -1;
+
+        const rowEndIndex =
+          openIndex >= 0
+            ? Math.min(
+                visibleCategories.length - 1,
+                openIndex + (columns - 1 - (openIndex % columns)),
+              )
+            : -1;
+
+        const renderCategoryCard = (category: string) => {
           const products = productsByCategory.get(category) ?? [];
-          if (isSearching && products.length === 0) return null;
-          const isOpen = isSearching ? true : !!openCategories[category];
+          const isOpen = isSearching ? true : openCategory === category;
           const selectedInCat = products.reduce(
             (sum, p) => sum + (quantityFor(p.id) > 0 ? 1 : 0),
             0,
@@ -186,21 +204,15 @@ function Workspace() {
               </span>
             </button>
           );
-        })}
-      </div>
+        };
 
-      {/* Expanded categories */}
-      <div className="mt-4 space-y-3">
-        {CATEGORY_ORDER.map((category) => {
+        const renderExpansion = (category: string) => {
           const products = productsByCategory.get(category) ?? [];
-          if (isSearching && products.length === 0) return null;
-          const isOpen = isSearching ? true : !!openCategories[category];
-          if (!isOpen) return null;
           const tint = CATEGORY_TINTS[category];
           return (
             <div
-              key={category}
-              className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm"
+              key={`${category}-panel`}
+              className="col-span-2 overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm sm:col-span-3"
             >
               <div
                 style={{ backgroundColor: tint?.bg }}
@@ -303,9 +315,24 @@ function Workspace() {
               </div>
             </div>
           );
-        })}
-      </div>
+        };
 
+        const nodes: React.ReactNode[] = [];
+        visibleCategories.forEach((category, idx) => {
+          nodes.push(renderCategoryCard(category));
+          if (idx === rowEndIndex && openCategory) {
+            nodes.push(renderExpansion(openCategory));
+          }
+        });
+
+        return (
+          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {nodes}
+            {isSearching &&
+              visibleCategories.map((c) => renderExpansion(c))}
+          </div>
+        );
+      })()}
       {/* Floating cart toggle */}
       {!cartOpen && (
         <button
