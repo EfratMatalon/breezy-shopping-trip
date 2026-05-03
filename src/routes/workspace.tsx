@@ -13,17 +13,17 @@ export const Route = createFileRoute("/workspace")({
   component: Workspace,
 });
 
-const CATEGORY_TINTS: Record<string, { bg: string; ring: string }> = {
-  "פירות":           { bg: "var(--cat-fruits)",     ring: "oklch(0.85 0.09 70)" },
-  "ירקות":           { bg: "var(--cat-vegetables)", ring: "oklch(0.82 0.1 145)" },
-  "מוצרי חלב":       { bg: "var(--cat-dairy)",      ring: "oklch(0.82 0.08 240)" },
-  "מאפים":           { bg: "var(--cat-bakery)",     ring: "oklch(0.82 0.08 60)" },
-  "בשר ודגים":       { bg: "var(--cat-meat)",       ring: "oklch(0.82 0.09 25)" },
-  "קפואים":          { bg: "var(--cat-frozen)",     ring: "oklch(0.82 0.08 220)" },
-  "שתייה":           { bg: "var(--cat-drinks)",     ring: "oklch(0.82 0.09 200)" },
-  "חטיפים ומתוקים":  { bg: "var(--cat-snacks)",     ring: "oklch(0.82 0.1 340)" },
-  "ניקיון":          { bg: "var(--cat-cleaning)",   ring: "oklch(0.82 0.07 180)" },
-  "מוצרי יסוד":      { bg: "var(--cat-basics)",     ring: "oklch(0.85 0.03 260)" },
+const CATEGORY_TINTS: Record<string, { bg: string; icon: string }> = {
+  "פירות":           { bg: "var(--cat-fruits)",     icon: "🍎" },
+  "ירקות":           { bg: "var(--cat-vegetables)", icon: "🥬" },
+  "מוצרי חלב":       { bg: "var(--cat-dairy)",      icon: "🥛" },
+  "מאפים":           { bg: "var(--cat-bakery)",     icon: "🍞" },
+  "בשר ודגים":       { bg: "var(--cat-meat)",       icon: "🍗" },
+  "קפואים":          { bg: "var(--cat-frozen)",     icon: "🧊" },
+  "שתייה":           { bg: "var(--cat-drinks)",     icon: "🥤" },
+  "חטיפים ומתוקים":  { bg: "var(--cat-snacks)",     icon: "🍫" },
+  "ניקיון":          { bg: "var(--cat-cleaning)",   icon: "🧼" },
+  "מוצרי יסוד":      { bg: "var(--cat-basics)",     icon: "🛒" },
 };
 
 function Workspace() {
@@ -140,7 +140,7 @@ function Workspace() {
       </form>
 
       {/* Categories */}
-      <div className="mt-4 space-y-2">
+      <div className="mt-5 space-y-3">
         {CATEGORY_ORDER.map((category) => {
           const products = productsByCategory.get(category) ?? [];
           if (isSearching && products.length === 0) return null;
@@ -153,13 +153,13 @@ function Workspace() {
           return (
             <div
               key={category}
-              className="overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-sm"
+              className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all hover:shadow-md"
             >
               <button
                 type="button"
                 onClick={() => toggleCategory(category)}
                 style={{ backgroundColor: tint?.bg }}
-                className="flex w-full items-center justify-between px-4 py-3 text-right transition-colors hover:brightness-95"
+                className="flex w-full items-center justify-between px-4 py-3.5 text-right transition-all hover:brightness-95"
                 aria-expanded={isOpen}
               >
                 <div className="flex items-center gap-2">
@@ -172,13 +172,19 @@ function Workspace() {
                     {products.length} מוצרים
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   {selectedInCat > 0 && (
                     <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
                       {selectedInCat}
                     </span>
                   )}
-                  <span className="text-sm font-semibold">{category}</span>
+                  <span className="text-base font-semibold">{category}</span>
+                  <span
+                    className="flex h-9 w-9 items-center justify-center rounded-xl bg-background/70 text-lg shadow-sm ring-1 ring-border/50"
+                    aria-hidden
+                  >
+                    {tint?.icon ?? "🛒"}
+                  </span>
                 </div>
               </button>
               {isOpen && (
