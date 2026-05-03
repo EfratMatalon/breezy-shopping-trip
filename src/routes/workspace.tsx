@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Plus, Minus, X, Search, ChevronDown, ShoppingCart } from "lucide-react";
+import { Plus, Minus, X, Search, ShoppingCart } from "lucide-react";
 import { useAppState, CATEGORY_ORDER, type Product } from "../lib/store";
 
 export const Route = createFileRoute("/workspace")({
