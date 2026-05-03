@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { Nav } from "../components/Nav";
+import { AppStateProvider } from "../lib/store";
 
 import appCss from "../styles.css?url";
 
