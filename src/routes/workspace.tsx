@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Minus, X, Search, ShoppingCart } from "lucide-react";
+import { Plus, Minus, X, Search, ShoppingCart, Sparkles } from "lucide-react";
 import { useAppState, CATEGORY_ORDER, type Product } from "../lib/store";
 
 export const Route = createFileRoute("/workspace")({
@@ -35,6 +35,7 @@ function Workspace() {
     addUserProduct,
     saveCurrentList,
     startNewCycle,
+    dismissSuggestion,
   } = useAppState();
 
   const [query, setQuery] = useState("");
@@ -92,6 +93,35 @@ function Workspace() {
 
   const quantityFor = (productId: string) =>
     state.selectedItems.find((i) => i.productId === productId)?.quantity ?? 0;
+
+  // Smart suggestions: products that appeared 2+ times in past lists,
+  // not currently selected, and not dismissed. Max 2 per category.
+  const suggestionsByCategory = useMemo(() => {
+    const counts = new Map<string, number>();
+    state.shoppingLists.forEach((list) => {
+      const seen = new Set<string>();
+      list.items.forEach((it) => {
+        if (seen.has(it.productId)) return;
+        seen.add(it.productId);
+        counts.set(it.productId, (counts.get(it.productId) ?? 0) + 1);
+      });
+    });
+    const selectedIds = new Set(state.selectedItems.map((i) => i.productId));
+    const dismissed = new Set(state.dismissedSuggestions);
+    const byCat = new Map<string, Product[]>();
+    CATEGORY_ORDER.forEach((c) => byCat.set(c, []));
+    Array.from(counts.entries())
+      .filter(([id, n]) => n >= 2 && !selectedIds.has(id) && !dismissed.has(id))
+      .sort((a, b) => b[1] - a[1])
+      .forEach(([id]) => {
+        const p = productById.get(id);
+        if (!p) return;
+        const key = p.category && byCat.has(p.category) ? p.category : "מוצרי יסוד";
+        const arr = byCat.get(key)!;
+        if (arr.length < 2) arr.push(p);
+      });
+    return byCat;
+  }, [state.shoppingLists, state.selectedItems, state.dismissedSuggestions, productById]);
 
   const exactMatch = allProducts.find((p) => p.name === query.trim());
 
@@ -209,6 +239,7 @@ function Workspace() {
         const renderExpansion = (category: string) => {
           const products = productsByCategory.get(category) ?? [];
           const tint = CATEGORY_TINTS[category];
+          const suggestions = isSearching ? [] : (suggestionsByCategory.get(category) ?? []);
           return (
             <div
               key={`${category}-panel`}
@@ -237,6 +268,49 @@ function Workspace() {
                   </span>
                 </div>
               </div>
+              {suggestions.length > 0 && (
+                <div
+                  className="border-t border-border/60 px-3 py-2.5"
+                  style={{ backgroundColor: tint ? `color-mix(in oklab, ${tint.bg} 35%, var(--card))` : undefined }}
+                >
+                  <div className="mb-1.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                    <Sparkles className="h-3 w-3 text-primary" />
+                    <span>בדרך כלל אתה קונה את זה</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {suggestions.map((p) => (
+                      <div
+                        key={`sugg-${p.id}`}
+                        className="group flex items-center gap-1 rounded-full border border-dashed border-primary/40 bg-background/80 py-1 pl-1 pr-3 text-xs shadow-sm transition-all hover:border-primary hover:bg-background"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => handleAdd(p.id)}
+                          className="font-medium text-foreground"
+                        >
+                          {p.name}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleAdd(p.id)}
+                          className="rounded-full bg-primary p-0.5 text-primary-foreground transition-transform hover:scale-110"
+                          aria-label="הוספה"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => dismissSuggestion(p.id)}
+                          className="rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                          aria-label="התעלמות"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div
                 className="grid grid-cols-2 gap-2 border-t border-border p-3 sm:grid-cols-3"
                 style={{ backgroundColor: tint ? `color-mix(in oklab, ${tint.bg} 55%, var(--card))` : undefined }}
