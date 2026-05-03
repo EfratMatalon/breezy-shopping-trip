@@ -326,20 +326,24 @@ function Workspace() {
                       <button
                         type="button"
                         onClick={() =>
-                          updateSelectedQuantity(it.productId, it.quantity - 1)
+                          handleQtyChange(it.productId, it.quantity - 1)
                         }
-                        className="rounded-md p-1 text-muted-foreground hover:bg-accent"
+                        className="rounded-md p-1 text-muted-foreground transition-all hover:bg-accent hover:scale-110 active:scale-95"
                         aria-label="הפחתה"
                       >
                         <Minus className="h-4 w-4" />
                       </button>
-                      <span className="min-w-[1.5rem] text-center text-sm font-semibold">
+                      <span
+                        key={it.quantity}
+                        style={{ animation: "pop 0.25s ease-out" }}
+                        className="min-w-[1.5rem] text-center text-sm font-semibold"
+                      >
                         {it.quantity}
                       </span>
                       <button
                         type="button"
-                        onClick={() => addSelectedItem(it.productId, 1)}
-                        className="rounded-md bg-primary p-1 text-primary-foreground hover:bg-primary/90"
+                        onClick={() => handleAdd(it.productId)}
+                        className="rounded-md bg-primary p-1 text-primary-foreground transition-all hover:bg-primary/90 hover:scale-110 active:scale-95"
                         aria-label="הוספה"
                       >
                         <Plus className="h-4 w-4" />
