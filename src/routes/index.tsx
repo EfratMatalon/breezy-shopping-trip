@@ -3,8 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "דף הבית — רשימת קניות" },
-      { name: "description", content: "ניהול רשימת קניות חכמה — פתחו רשימה חדשה או הציצו ברשימות קודמות." },
+      { title: "רשימת קניות" },
+      { name: "description", content: "פתיחת רשימת קניות חדשה." },
     ],
   }),
   component: Home,
@@ -12,24 +12,22 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   return (
-    <section className="flex min-h-[70vh] flex-col items-center justify-center text-center">
-      <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-        ניהול רשימת קניות חכמה
-      </h1>
-      <div className="mt-12 flex flex-col items-center gap-4">
-        <Link
-          to="/workspace"
-          className="inline-flex items-center justify-center rounded-xl bg-primary px-10 py-5 text-lg font-semibold text-primary-foreground shadow-lg transition-colors hover:bg-primary/90"
-        >
-          רשימה חדשה
-        </Link>
-        <Link
-          to="/history"
-          className="inline-flex items-center justify-center rounded-lg border border-input bg-background px-6 py-2.5 text-sm font-medium transition-colors hover:bg-accent"
-        >
-          רשימות קודמות
-        </Link>
-      </div>
+    <section className="flex min-h-[60vh] flex-col items-center justify-center text-center">
+      <h2 className="text-lg font-medium text-muted-foreground">
+        ניהול רשימת קניות
+      </h2>
+      <Link
+        to="/workspace"
+        className="mt-6 inline-flex items-center justify-center rounded-2xl bg-primary px-14 py-7 text-2xl font-bold text-primary-foreground shadow-xl transition-transform hover:bg-primary/90 hover:scale-[1.02]"
+      >
+        רשימה חדשה
+      </Link>
+      <Link
+        to="/history"
+        className="mt-5 text-sm text-muted-foreground underline-offset-4 hover:underline"
+      >
+        רשימות קודמות
+      </Link>
     </section>
   );
 }
