@@ -250,7 +250,7 @@ function Workspace() {
       {/* Side cart overlay */}
       {cartOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm animate-in fade-in"
           onClick={() => setCartOpen(false)}
           aria-hidden
         />
@@ -258,8 +258,8 @@ function Workspace() {
 
       {/* Side cart panel */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-full max-w-sm flex-col border-l border-border bg-card shadow-2xl transition-transform duration-300 ${
-          cartOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col border-l border-border bg-card shadow-2xl transition-transform duration-300 ${
+          cartOpen ? "translate-x-0" : "translate-x-full"
         }`}
         aria-hidden={!cartOpen}
       >
