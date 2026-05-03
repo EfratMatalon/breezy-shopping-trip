@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Plus, Minus, X, Search } from "lucide-react";
-import { useAppState, type Product } from "../lib/store";
+import { Plus, Minus, X, Search, ChevronDown } from "lucide-react";
+import { useAppState, CATEGORY_ORDER, type Product } from "../lib/store";
 
 export const Route = createFileRoute("/workspace")({
   head: () => ({
@@ -25,6 +25,9 @@ function Workspace() {
   } = useAppState();
 
   const [query, setQuery] = useState("");
+  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
+    () => Object.fromEntries(CATEGORY_ORDER.map((c, i) => [c, i === 0])),
+  );
 
   const allProducts = useMemo<Product[]>(
     () => [...state.systemCatalog, ...state.userProducts],
@@ -37,18 +40,18 @@ function Workspace() {
     return m;
   }, [allProducts]);
 
-  const grouped = useMemo(() => {
+  const productsByCategory = useMemo(() => {
     const q = query.trim();
     const filtered = q
       ? allProducts.filter((p) => p.name.includes(q))
       : allProducts;
     const map = new Map<string, Product[]>();
+    CATEGORY_ORDER.forEach((c) => map.set(c, []));
     filtered.forEach((p) => {
-      const key = p.category ?? "אחר";
-      if (!map.has(key)) map.set(key, []);
+      const key = p.category && map.has(p.category) ? p.category : "מוצרי יסוד";
       map.get(key)!.push(p);
     });
-    return Array.from(map.entries());
+    return map;
   }, [allProducts, query]);
 
   const quantityFor = (productId: string) =>
@@ -63,8 +66,9 @@ function Workspace() {
     if (exactMatch) {
       addSelectedItem(exactMatch.id, 1);
     } else {
-      const product = addUserProduct(name, "שלי");
+      const product = addUserProduct(name, "מוצרי יסוד");
       addSelectedItem(product.id, 1);
+      setOpenCategories((s) => ({ ...s, "מוצרי יסוד": true }));
     }
     setQuery("");
   };
@@ -77,12 +81,17 @@ function Workspace() {
     startNewCycle();
   };
 
+  const toggleCategory = (c: string) =>
+    setOpenCategories((s) => ({ ...s, [c]: !s[c] }));
+
+  const isSearching = query.trim().length > 0;
+
   return (
     <section className="pb-32">
-      <div className="mb-6">
+      <div className="mb-4">
         <h1 className="text-2xl font-semibold tracking-tight">רשימת קניות</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          בחרו מוצרים לפי קטגוריה או חפשו במהירות
+          בחרו מוצרים מתוך הקטגוריות
         </p>
       </div>
 
@@ -110,73 +119,112 @@ function Workspace() {
       </form>
 
       {/* Categories */}
-      <div className="mt-6 space-y-6">
-        {grouped.length === 0 && (
-          <p className="text-sm text-muted-foreground">לא נמצאו מוצרים תואמים.</p>
-        )}
-        {grouped.map(([category, products]) => (
-          <div key={category}>
-            <h2 className="mb-2 text-sm font-semibold text-muted-foreground">
-              {category}
-            </h2>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {products.map((p) => {
-                const qty = quantityFor(p.id);
-                const isSelected = qty > 0;
-                return (
-                  <div
-                    key={p.id}
-                    className={`flex items-center justify-between rounded-lg border bg-card px-3 py-2 transition-colors ${
-                      isSelected ? "border-primary" : "border-border"
+      <div className="mt-4 space-y-2">
+        {CATEGORY_ORDER.map((category) => {
+          const products = productsByCategory.get(category) ?? [];
+          if (isSearching && products.length === 0) return null;
+          const isOpen = isSearching ? true : !!openCategories[category];
+          const selectedInCat = products.reduce(
+            (sum, p) => sum + (quantityFor(p.id) > 0 ? 1 : 0),
+            0,
+          );
+          return (
+            <div
+              key={category}
+              className="overflow-hidden rounded-lg border border-border bg-card"
+            >
+              <button
+                type="button"
+                onClick={() => toggleCategory(category)}
+                className="flex w-full items-center justify-between px-4 py-3 text-right hover:bg-accent/50"
+                aria-expanded={isOpen}
+              >
+                <div className="flex items-center gap-2">
+                  <ChevronDown
+                    className={`h-4 w-4 text-muted-foreground transition-transform ${
+                      isOpen ? "rotate-180" : ""
                     }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => addSelectedItem(p.id, 1)}
-                      className="flex-1 text-right text-sm"
-                    >
-                      {p.name}
-                    </button>
-                    {isSelected ? (
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            updateSelectedQuantity(p.id, qty - 1)
-                          }
-                          className="rounded-md p-1 text-muted-foreground hover:bg-accent"
-                          aria-label="הפחתה"
+                  />
+                  <span className="text-xs text-muted-foreground">
+                    {products.length} מוצרים
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {selectedInCat > 0 && (
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                      {selectedInCat}
+                    </span>
+                  )}
+                  <span className="text-sm font-semibold">{category}</span>
+                </div>
+              </button>
+              {isOpen && (
+                <div className="grid grid-cols-2 gap-2 border-t border-border p-3 sm:grid-cols-3">
+                  {products.length === 0 ? (
+                    <p className="col-span-full text-center text-xs text-muted-foreground">
+                      אין מוצרים בקטגוריה זו
+                    </p>
+                  ) : (
+                    products.map((p) => {
+                      const qty = quantityFor(p.id);
+                      const isSelected = qty > 0;
+                      return (
+                        <div
+                          key={p.id}
+                          className={`flex items-center justify-between rounded-lg border bg-background px-3 py-2 transition-colors ${
+                            isSelected ? "border-primary" : "border-border"
+                          }`}
                         >
-                          <Minus className="h-4 w-4" />
-                        </button>
-                        <span className="min-w-[1.25rem] text-center text-sm font-medium">
-                          {qty}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => addSelectedItem(p.id, 1)}
-                          className="rounded-md p-1 text-primary hover:bg-accent"
-                          aria-label="הוספה"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => addSelectedItem(p.id, 1)}
-                        className="rounded-md bg-primary/10 p-1.5 text-primary hover:bg-primary/20"
-                        aria-label={`הוסף ${p.name}`}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
+                          <button
+                            type="button"
+                            onClick={() => addSelectedItem(p.id, 1)}
+                            className="flex-1 text-right text-sm"
+                          >
+                            {p.name}
+                          </button>
+                          {isSelected ? (
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  updateSelectedQuantity(p.id, qty - 1)
+                                }
+                                className="rounded-md p-1 text-muted-foreground hover:bg-accent"
+                                aria-label="הפחתה"
+                              >
+                                <Minus className="h-4 w-4" />
+                              </button>
+                              <span className="min-w-[1.25rem] text-center text-sm font-medium">
+                                {qty}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => addSelectedItem(p.id, 1)}
+                                className="rounded-md p-1 text-primary hover:bg-accent"
+                                aria-label="הוספה"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => addSelectedItem(p.id, 1)}
+                              className="rounded-md bg-primary/10 p-1.5 text-primary hover:bg-primary/20"
+                              aria-label={`הוסף ${p.name}`}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Selected summary */}

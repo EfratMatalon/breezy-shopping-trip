@@ -38,15 +38,80 @@ export type AppState = {
 
 // ============= Defaults =============
 
+export const CATEGORY_ORDER: string[] = [
+  "פירות",
+  "ירקות",
+  "מוצרי חלב",
+  "מאפים",
+  "בשר ודגים",
+  "קפואים",
+  "שתייה",
+  "חטיפים ומתוקים",
+  "ניקיון",
+  "מוצרי יסוד",
+];
+
 const DEFAULT_CATALOG: Product[] = [
-  { id: "sys-milk", name: "חלב", category: "מוצרי חלב" },
-  { id: "sys-bread", name: "לחם", category: "מאפים" },
-  { id: "sys-eggs", name: "ביצים", category: "מוצרי חלב" },
+  // פירות
+  { id: "sys-banana", name: "בננות", category: "פירות" },
+  { id: "sys-apple", name: "תפוחים", category: "פירות" },
+  { id: "sys-orange", name: "תפוזים", category: "פירות" },
+  { id: "sys-grape", name: "ענבים", category: "פירות" },
+  { id: "sys-strawberry", name: "תותים", category: "פירות" },
+  // ירקות
   { id: "sys-tomato", name: "עגבניות", category: "ירקות" },
   { id: "sys-cucumber", name: "מלפפונים", category: "ירקות" },
-  { id: "sys-banana", name: "בננות", category: "פירות" },
-  { id: "sys-rice", name: "אורז", category: "יבשים" },
-  { id: "sys-pasta", name: "פסטה", category: "יבשים" },
+  { id: "sys-pepper", name: "פלפלים", category: "ירקות" },
+  { id: "sys-onion", name: "בצל", category: "ירקות" },
+  { id: "sys-potato", name: "תפוחי אדמה", category: "ירקות" },
+  { id: "sys-carrot", name: "גזר", category: "ירקות" },
+  // מוצרי חלב
+  { id: "sys-milk", name: "חלב", category: "מוצרי חלב" },
+  { id: "sys-eggs", name: "ביצים", category: "מוצרי חלב" },
+  { id: "sys-cheese", name: "גבינה צהובה", category: "מוצרי חלב" },
+  { id: "sys-cottage", name: "קוטג'", category: "מוצרי חלב" },
+  { id: "sys-yogurt", name: "יוגורט", category: "מוצרי חלב" },
+  { id: "sys-butter", name: "חמאה", category: "מוצרי חלב" },
+  // מאפים
+  { id: "sys-bread", name: "לחם", category: "מאפים" },
+  { id: "sys-pita", name: "פיתות", category: "מאפים" },
+  { id: "sys-challah", name: "חלה", category: "מאפים" },
+  { id: "sys-bagel", name: "בייגלה", category: "מאפים" },
+  // בשר ודגים
+  { id: "sys-chicken", name: "חזה עוף", category: "בשר ודגים" },
+  { id: "sys-beef", name: "בשר טחון", category: "בשר ודגים" },
+  { id: "sys-salmon", name: "סלמון", category: "בשר ודגים" },
+  { id: "sys-tuna", name: "טונה", category: "בשר ודגים" },
+  // קפואים
+  { id: "sys-frozen-veg", name: "ירקות קפואים", category: "קפואים" },
+  { id: "sys-frozen-pizza", name: "פיצה קפואה", category: "קפואים" },
+  { id: "sys-icecream", name: "גלידה", category: "קפואים" },
+  { id: "sys-frozen-fries", name: "צ'יפס קפוא", category: "קפואים" },
+  // שתייה
+  { id: "sys-water", name: "מים מינרליים", category: "שתייה" },
+  { id: "sys-cola", name: "קולה", category: "שתייה" },
+  { id: "sys-juice", name: "מיץ תפוזים", category: "שתייה" },
+  { id: "sys-coffee", name: "קפה", category: "שתייה" },
+  { id: "sys-tea", name: "תה", category: "שתייה" },
+  // חטיפים ומתוקים
+  { id: "sys-chocolate", name: "שוקולד", category: "חטיפים ומתוקים" },
+  { id: "sys-bamba", name: "במבה", category: "חטיפים ומתוקים" },
+  { id: "sys-bisli", name: "ביסלי", category: "חטיפים ומתוקים" },
+  { id: "sys-cookies", name: "עוגיות", category: "חטיפים ומתוקים" },
+  { id: "sys-chips", name: "חטיף תפוצ'יפס", category: "חטיפים ומתוקים" },
+  // ניקיון
+  { id: "sys-dish-soap", name: "סבון כלים", category: "ניקיון" },
+  { id: "sys-laundry", name: "אבקת כביסה", category: "ניקיון" },
+  { id: "sys-toilet-paper", name: "נייר טואלט", category: "ניקיון" },
+  { id: "sys-paper-towels", name: "מגבות נייר", category: "ניקיון" },
+  { id: "sys-floor", name: "סבון רצפה", category: "ניקיון" },
+  // מוצרי יסוד
+  { id: "sys-rice", name: "אורז", category: "מוצרי יסוד" },
+  { id: "sys-pasta", name: "פסטה", category: "מוצרי יסוד" },
+  { id: "sys-flour", name: "קמח", category: "מוצרי יסוד" },
+  { id: "sys-sugar", name: "סוכר", category: "מוצרי יסוד" },
+  { id: "sys-salt", name: "מלח", category: "מוצרי יסוד" },
+  { id: "sys-oil", name: "שמן", category: "מוצרי יסוד" },
 ];
 
 function newCycleId(): string {
