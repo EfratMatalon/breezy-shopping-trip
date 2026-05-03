@@ -239,6 +239,7 @@ function Workspace() {
         const renderExpansion = (category: string) => {
           const products = productsByCategory.get(category) ?? [];
           const tint = CATEGORY_TINTS[category];
+          const suggestions = isSearching ? [] : (suggestionsByCategory.get(category) ?? []);
           return (
             <div
               key={`${category}-panel`}
@@ -267,6 +268,49 @@ function Workspace() {
                   </span>
                 </div>
               </div>
+              {suggestions.length > 0 && (
+                <div
+                  className="border-t border-border/60 px-3 py-2.5"
+                  style={{ backgroundColor: tint ? `color-mix(in oklab, ${tint.bg} 35%, var(--card))` : undefined }}
+                >
+                  <div className="mb-1.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                    <Sparkles className="h-3 w-3 text-primary" />
+                    <span>בדרך כלל אתה קונה את זה</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {suggestions.map((p) => (
+                      <div
+                        key={`sugg-${p.id}`}
+                        className="group flex items-center gap-1 rounded-full border border-dashed border-primary/40 bg-background/80 py-1 pl-1 pr-3 text-xs shadow-sm transition-all hover:border-primary hover:bg-background"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => handleAdd(p.id)}
+                          className="font-medium text-foreground"
+                        >
+                          {p.name}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleAdd(p.id)}
+                          className="rounded-full bg-primary p-0.5 text-primary-foreground transition-transform hover:scale-110"
+                          aria-label="הוספה"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => dismissSuggestion(p.id)}
+                          className="rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                          aria-label="התעלמות"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div
                 className="grid grid-cols-2 gap-2 border-t border-border p-3 sm:grid-cols-3"
                 style={{ backgroundColor: tint ? `color-mix(in oklab, ${tint.bg} 55%, var(--card))` : undefined }}
