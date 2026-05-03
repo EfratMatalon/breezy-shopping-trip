@@ -35,6 +35,7 @@ function Workspace() {
     addUserProduct,
     saveCurrentList,
     startNewCycle,
+    dismissSuggestion,
   } = useAppState();
 
   const [query, setQuery] = useState("");
