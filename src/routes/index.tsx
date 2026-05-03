@@ -14,7 +14,7 @@ function Home() {
   return (
     <section className="flex min-h-[60vh] flex-col items-center justify-center text-center">
       <h2 className="text-lg font-medium text-muted-foreground">
-        ניהול רשימת קניות
+        מה צריך לקנות השבוע?
       </h2>
       <Link
         to="/workspace"
