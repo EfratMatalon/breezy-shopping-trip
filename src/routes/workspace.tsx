@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Plus, Minus, X, Search, ShoppingCart } from "lucide-react";
 import { useAppState, CATEGORY_ORDER, type Product } from "../lib/store";
 
@@ -40,9 +40,17 @@ function Workspace() {
   const [query, setQuery] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
   const [bumpedId, setBumpedId] = useState<string | null>(null);
-  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
-    () => Object.fromEntries(CATEGORY_ORDER.map((c, i) => [c, i === 0])),
+  const [openCategory, setOpenCategory] = useState<string | null>(
+    CATEGORY_ORDER[0] ?? null,
   );
+  const [columns, setColumns] = useState(2);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 640px)");
+    const update = () => setColumns(mq.matches ? 3 : 2);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const bump = (id: string) => {
     setBumpedId(id);
