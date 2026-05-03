@@ -139,8 +139,8 @@ function Workspace() {
         </div>
       </form>
 
-      {/* Categories */}
-      <div className="mt-5 space-y-3">
+      {/* Categories grid */}
+      <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {CATEGORY_ORDER.map((category) => {
           const products = productsByCategory.get(category) ?? [];
           if (isSearching && products.length === 0) return null;
@@ -151,33 +151,62 @@ function Workspace() {
           );
           const tint = CATEGORY_TINTS[category];
           return (
+            <button
+              key={category}
+              type="button"
+              onClick={() => toggleCategory(category)}
+              style={{ backgroundColor: tint?.bg }}
+              aria-expanded={isOpen}
+              className={`relative flex aspect-square flex-col items-center justify-center gap-2 rounded-2xl border bg-card p-3 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
+                isOpen ? "border-primary/50 ring-2 ring-primary/30" : "border-border/70"
+              }`}
+            >
+              {selectedInCat > 0 && (
+                <span className="absolute right-2 top-2 rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground shadow">
+                  {selectedInCat}
+                </span>
+              )}
+              <span
+                className="flex h-12 w-12 items-center justify-center rounded-2xl bg-background/70 text-2xl shadow-sm ring-1 ring-border/50"
+                aria-hidden
+              >
+                {tint?.icon ?? "🛒"}
+              </span>
+              <span className="text-sm font-semibold leading-tight">{category}</span>
+              <span className="text-[11px] text-muted-foreground">
+                {products.length} מוצרים
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Expanded categories */}
+      <div className="mt-4 space-y-3">
+        {CATEGORY_ORDER.map((category) => {
+          const products = productsByCategory.get(category) ?? [];
+          if (isSearching && products.length === 0) return null;
+          const isOpen = isSearching ? true : !!openCategories[category];
+          if (!isOpen) return null;
+          const tint = CATEGORY_TINTS[category];
+          return (
             <div
               key={category}
-              className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all hover:shadow-md"
+              className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm"
             >
-              <button
-                type="button"
-                onClick={() => toggleCategory(category)}
+              <div
                 style={{ backgroundColor: tint?.bg }}
-                className="flex w-full items-center justify-between px-4 py-3.5 text-right transition-all hover:brightness-95"
-                aria-expanded={isOpen}
+                className="flex items-center justify-between px-4 py-3"
               >
-                <div className="flex items-center gap-2">
-                  <ChevronDown
-                    className={`h-4 w-4 text-muted-foreground transition-transform ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                  <span className="text-xs text-muted-foreground">
-                    {products.length} מוצרים
-                  </span>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => toggleCategory(category)}
+                  className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-background/60"
+                  aria-label="סגור קטגוריה"
+                >
+                  <X className="h-4 w-4" />
+                </button>
                 <div className="flex items-center gap-2.5">
-                  {selectedInCat > 0 && (
-                    <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
-                      {selectedInCat}
-                    </span>
-                  )}
                   <span className="text-base font-semibold">{category}</span>
                   <span
                     className="flex h-9 w-9 items-center justify-center rounded-xl bg-background/70 text-lg shadow-sm ring-1 ring-border/50"
@@ -186,86 +215,84 @@ function Workspace() {
                     {tint?.icon ?? "🛒"}
                   </span>
                 </div>
-              </button>
-              {isOpen && (
-                <div
-                  className="grid grid-cols-2 gap-2 border-t border-border p-3 sm:grid-cols-3"
-                  style={{ backgroundColor: tint ? `color-mix(in oklab, ${tint.bg} 55%, var(--card))` : undefined }}
-                >
-                  {products.length === 0 ? (
-                    <p className="col-span-full text-center text-xs text-muted-foreground">
-                      אין מוצרים בקטגוריה זו
-                    </p>
-                  ) : (
-                    products.map((p) => {
-                      const qty = quantityFor(p.id);
-                      const isSelected = qty > 0;
-                      const isBumped = bumpedId === p.id;
-                      return (
-                        <div
-                          key={p.id}
-                          role="button"
-                          tabIndex={0}
-                          onClick={() => handleAdd(p.id)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              handleAdd(p.id);
-                            }
-                          }}
-                          style={isBumped ? { animation: "bump 0.35s ease-out" } : undefined}
-                          className={`group flex cursor-pointer items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
-                            isSelected
-                              ? "border-primary/40 bg-[var(--primary-soft)] ring-1 ring-primary/30"
-                              : "border-border bg-background/85 hover:border-primary/40 hover:bg-background"
-                          }`}
-                        >
-                          <span className="flex-1 truncate text-right font-medium">
-                            {p.name}
-                          </span>
-                          {isSelected ? (
-                            <div
-                              className="flex items-center gap-1"
-                              onClick={(e) => e.stopPropagation()}
+              </div>
+              <div
+                className="grid grid-cols-2 gap-2 border-t border-border p-3 sm:grid-cols-3"
+                style={{ backgroundColor: tint ? `color-mix(in oklab, ${tint.bg} 55%, var(--card))` : undefined }}
+              >
+                {products.length === 0 ? (
+                  <p className="col-span-full text-center text-xs text-muted-foreground">
+                    אין מוצרים בקטגוריה זו
+                  </p>
+                ) : (
+                  products.map((p) => {
+                    const qty = quantityFor(p.id);
+                    const isSelected = qty > 0;
+                    const isBumped = bumpedId === p.id;
+                    return (
+                      <div
+                        key={p.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => handleAdd(p.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handleAdd(p.id);
+                          }
+                        }}
+                        style={isBumped ? { animation: "bump 0.35s ease-out" } : undefined}
+                        className={`group flex cursor-pointer items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
+                          isSelected
+                            ? "border-primary/40 bg-[var(--primary-soft)] ring-1 ring-primary/30"
+                            : "border-border bg-background/85 hover:border-primary/40 hover:bg-background"
+                        }`}
+                      >
+                        <span className="flex-1 truncate text-right font-medium">
+                          {p.name}
+                        </span>
+                        {isSelected ? (
+                          <div
+                            className="flex items-center gap-1"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleQtyChange(p.id, qty - 1)}
+                              className="rounded-md p-1 text-muted-foreground transition-all hover:bg-background hover:scale-110 active:scale-95"
+                              aria-label="הפחתה"
                             >
-                              <button
-                                type="button"
-                                onClick={() => handleQtyChange(p.id, qty - 1)}
-                                className="rounded-md p-1 text-muted-foreground transition-all hover:bg-background hover:scale-110 active:scale-95"
-                                aria-label="הפחתה"
-                              >
-                                <Minus className="h-4 w-4" />
-                              </button>
-                              <span
-                                key={qty}
-                                style={{ animation: "pop 0.25s ease-out" }}
-                                className="min-w-[1.25rem] text-center text-sm font-semibold text-primary"
-                              >
-                                {qty}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => handleAdd(p.id)}
-                                className="rounded-md bg-primary p-1 text-primary-foreground transition-all hover:bg-primary/90 hover:scale-110 active:scale-95"
-                                aria-label="הוספה"
-                              >
-                                <Plus className="h-4 w-4" />
-                              </button>
-                            </div>
-                          ) : (
+                              <Minus className="h-4 w-4" />
+                            </button>
                             <span
-                              className="rounded-md bg-primary/10 p-1.5 text-primary transition-all group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110"
-                              aria-hidden
+                              key={qty}
+                              style={{ animation: "pop 0.25s ease-out" }}
+                              className="min-w-[1.25rem] text-center text-sm font-semibold text-primary"
+                            >
+                              {qty}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleAdd(p.id)}
+                              className="rounded-md bg-primary p-1 text-primary-foreground transition-all hover:bg-primary/90 hover:scale-110 active:scale-95"
+                              aria-label="הוספה"
                             >
                               <Plus className="h-4 w-4" />
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-              )}
+                            </button>
+                          </div>
+                        ) : (
+                          <span
+                            className="rounded-md bg-primary/10 p-1.5 text-primary transition-all group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110"
+                            aria-hidden
+                          >
+                            <Plus className="h-4 w-4" />
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
           );
         })}
