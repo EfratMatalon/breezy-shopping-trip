@@ -26,9 +26,23 @@ function Workspace() {
 
   const [query, setQuery] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
+  const [bumpedId, setBumpedId] = useState<string | null>(null);
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
     () => Object.fromEntries(CATEGORY_ORDER.map((c, i) => [c, i === 0])),
   );
+
+  const bump = (id: string) => {
+    setBumpedId(id);
+    setTimeout(() => setBumpedId((curr) => (curr === id ? null : curr)), 350);
+  };
+  const handleAdd = (id: string) => {
+    addSelectedItem(id, 1);
+    bump(id);
+  };
+  const handleQtyChange = (id: string, qty: number) => {
+    updateSelectedQuantity(id, qty);
+    bump(id);
+  };
 
   const allProducts = useMemo<Product[]>(
     () => [...state.systemCatalog, ...state.userProducts],
@@ -162,19 +176,21 @@ function Workspace() {
                     products.map((p) => {
                       const qty = quantityFor(p.id);
                       const isSelected = qty > 0;
+                      const isBumped = bumpedId === p.id;
                       return (
                         <div
                           key={p.id}
                           role="button"
                           tabIndex={0}
-                          onClick={() => addSelectedItem(p.id, 1)}
+                          onClick={() => handleAdd(p.id)}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
                               e.preventDefault();
-                              addSelectedItem(p.id, 1);
+                              handleAdd(p.id);
                             }
                           }}
-                          className={`group flex cursor-pointer items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm transition-all hover:border-primary/60 hover:shadow-sm ${
+                          style={isBumped ? { animation: "bump 0.35s ease-out" } : undefined}
+                          className={`group flex cursor-pointer items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-md active:scale-[0.98] ${
                             isSelected
                               ? "border-primary bg-primary/10"
                               : "border-border bg-background hover:bg-accent/40"
@@ -190,21 +206,23 @@ function Workspace() {
                             >
                               <button
                                 type="button"
-                                onClick={() =>
-                                  updateSelectedQuantity(p.id, qty - 1)
-                                }
-                                className="rounded-md p-1 text-muted-foreground hover:bg-background"
+                                onClick={() => handleQtyChange(p.id, qty - 1)}
+                                className="rounded-md p-1 text-muted-foreground transition-all hover:bg-background hover:scale-110 active:scale-95"
                                 aria-label="הפחתה"
                               >
                                 <Minus className="h-4 w-4" />
                               </button>
-                              <span className="min-w-[1.25rem] text-center text-sm font-semibold text-primary">
+                              <span
+                                key={qty}
+                                style={{ animation: "pop 0.25s ease-out" }}
+                                className="min-w-[1.25rem] text-center text-sm font-semibold text-primary"
+                              >
                                 {qty}
                               </span>
                               <button
                                 type="button"
-                                onClick={() => addSelectedItem(p.id, 1)}
-                                className="rounded-md bg-primary p-1 text-primary-foreground hover:bg-primary/90"
+                                onClick={() => handleAdd(p.id)}
+                                className="rounded-md bg-primary p-1 text-primary-foreground transition-all hover:bg-primary/90 hover:scale-110 active:scale-95"
                                 aria-label="הוספה"
                               >
                                 <Plus className="h-4 w-4" />
@@ -212,7 +230,7 @@ function Workspace() {
                             </div>
                           ) : (
                             <span
-                              className="rounded-md bg-primary/10 p-1.5 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
+                              className="rounded-md bg-primary/10 p-1.5 text-primary transition-all group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110"
                               aria-hidden
                             >
                               <Plus className="h-4 w-4" />
@@ -308,20 +326,24 @@ function Workspace() {
                       <button
                         type="button"
                         onClick={() =>
-                          updateSelectedQuantity(it.productId, it.quantity - 1)
+                          handleQtyChange(it.productId, it.quantity - 1)
                         }
-                        className="rounded-md p-1 text-muted-foreground hover:bg-accent"
+                        className="rounded-md p-1 text-muted-foreground transition-all hover:bg-accent hover:scale-110 active:scale-95"
                         aria-label="הפחתה"
                       >
                         <Minus className="h-4 w-4" />
                       </button>
-                      <span className="min-w-[1.5rem] text-center text-sm font-semibold">
+                      <span
+                        key={it.quantity}
+                        style={{ animation: "pop 0.25s ease-out" }}
+                        className="min-w-[1.5rem] text-center text-sm font-semibold"
+                      >
                         {it.quantity}
                       </span>
                       <button
                         type="button"
-                        onClick={() => addSelectedItem(it.productId, 1)}
-                        className="rounded-md bg-primary p-1 text-primary-foreground hover:bg-primary/90"
+                        onClick={() => handleAdd(it.productId)}
+                        className="rounded-md bg-primary p-1 text-primary-foreground transition-all hover:bg-primary/90 hover:scale-110 active:scale-95"
                         aria-label="הוספה"
                       >
                         <Plus className="h-4 w-4" />
