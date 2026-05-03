@@ -167,15 +167,22 @@ type AppStore = {
 const AppStateContext = createContext<AppStore | null>(null);
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AppState>(() => loadState());
+  const [state, setState] = useState<AppState>(() => defaultState());
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    setState(loadState());
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
       // ignore quota errors
     }
-  }, [state]);
+  }, [state, hydrated]);
 
   const store = useMemo<AppStore>(() => {
     const addSelectedItem: AppStore["addSelectedItem"] = (productId, quantity = 1) =>
