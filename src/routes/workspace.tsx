@@ -26,9 +26,23 @@ function Workspace() {
 
   const [query, setQuery] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
+  const [bumpedId, setBumpedId] = useState<string | null>(null);
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
     () => Object.fromEntries(CATEGORY_ORDER.map((c, i) => [c, i === 0])),
   );
+
+  const bump = (id: string) => {
+    setBumpedId(id);
+    setTimeout(() => setBumpedId((curr) => (curr === id ? null : curr)), 350);
+  };
+  const handleAdd = (id: string) => {
+    addSelectedItem(id, 1);
+    bump(id);
+  };
+  const handleQtyChange = (id: string, qty: number) => {
+    updateSelectedQuantity(id, qty);
+    bump(id);
+  };
 
   const allProducts = useMemo<Product[]>(
     () => [...state.systemCatalog, ...state.userProducts],
