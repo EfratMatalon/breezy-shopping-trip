@@ -13,17 +13,17 @@ export const Route = createFileRoute("/workspace")({
   component: Workspace,
 });
 
-const CATEGORY_TINTS: Record<string, { bg: string; ring: string }> = {
-  "פירות":           { bg: "var(--cat-fruits)",     ring: "oklch(0.85 0.09 70)" },
-  "ירקות":           { bg: "var(--cat-vegetables)", ring: "oklch(0.82 0.1 145)" },
-  "מוצרי חלב":       { bg: "var(--cat-dairy)",      ring: "oklch(0.82 0.08 240)" },
-  "מאפים":           { bg: "var(--cat-bakery)",     ring: "oklch(0.82 0.08 60)" },
-  "בשר ודגים":       { bg: "var(--cat-meat)",       ring: "oklch(0.82 0.09 25)" },
-  "קפואים":          { bg: "var(--cat-frozen)",     ring: "oklch(0.82 0.08 220)" },
-  "שתייה":           { bg: "var(--cat-drinks)",     ring: "oklch(0.82 0.09 200)" },
-  "חטיפים ומתוקים":  { bg: "var(--cat-snacks)",     ring: "oklch(0.82 0.1 340)" },
-  "ניקיון":          { bg: "var(--cat-cleaning)",   ring: "oklch(0.82 0.07 180)" },
-  "מוצרי יסוד":      { bg: "var(--cat-basics)",     ring: "oklch(0.85 0.03 260)" },
+const CATEGORY_TINTS: Record<string, { bg: string; icon: string }> = {
+  "פירות":           { bg: "var(--cat-fruits)",     icon: "🍎" },
+  "ירקות":           { bg: "var(--cat-vegetables)", icon: "🥬" },
+  "מוצרי חלב":       { bg: "var(--cat-dairy)",      icon: "🥛" },
+  "מאפים":           { bg: "var(--cat-bakery)",     icon: "🍞" },
+  "בשר ודגים":       { bg: "var(--cat-meat)",       icon: "🍗" },
+  "קפואים":          { bg: "var(--cat-frozen)",     icon: "🧊" },
+  "שתייה":           { bg: "var(--cat-drinks)",     icon: "🥤" },
+  "חטיפים ומתוקים":  { bg: "var(--cat-snacks)",     icon: "🍫" },
+  "ניקיון":          { bg: "var(--cat-cleaning)",   icon: "🧼" },
+  "מוצרי יסוד":      { bg: "var(--cat-basics)",     icon: "🛒" },
 };
 
 function Workspace() {
