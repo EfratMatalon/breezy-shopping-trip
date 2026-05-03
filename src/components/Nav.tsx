@@ -12,12 +12,6 @@ export function Nav() {
           רשימת קניות
         </Link>
         <div className="flex items-center gap-6">
-          <Link to="/" className={linkClass} activeProps={activeProps} activeOptions={{ exact: true }}>
-            דף הבית
-          </Link>
-          <Link to="/workspace" className={linkClass} activeProps={activeProps}>
-            הרשימה שלי
-          </Link>
           <Link to="/history" className={linkClass} activeProps={activeProps}>
             היסטוריה
           </Link>
