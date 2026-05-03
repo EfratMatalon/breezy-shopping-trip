@@ -69,8 +69,21 @@
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.38 0.13 260);
+  --primary-foreground: oklch(0.99 0.005 250);
+  --primary-soft: oklch(0.95 0.04 260);
+
+  /* Category tints (very soft) */
+  --cat-fruits: oklch(0.96 0.045 70);
+  --cat-vegetables: oklch(0.96 0.05 145);
+  --cat-dairy: oklch(0.96 0.04 240);
+  --cat-bakery: oklch(0.95 0.04 60);
+  --cat-meat: oklch(0.95 0.045 25);
+  --cat-frozen: oklch(0.96 0.04 220);
+  --cat-drinks: oklch(0.96 0.045 200);
+  --cat-snacks: oklch(0.95 0.05 340);
+  --cat-cleaning: oklch(0.96 0.035 180);
+  --cat-basics: oklch(0.96 0.015 260);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
