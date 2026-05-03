@@ -25,6 +25,7 @@ function Workspace() {
   } = useAppState();
 
   const [query, setQuery] = useState("");
+  const [cartOpen, setCartOpen] = useState(false);
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
     () => Object.fromEntries(CATEGORY_ORDER.map((c, i) => [c, i === 0])),
   );
