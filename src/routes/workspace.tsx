@@ -353,9 +353,9 @@ function Workspace() {
                 finishList();
                 setCartOpen(false);
               }}
-              className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              className="w-full rounded-lg bg-primary px-4 py-3 text-base font-bold text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
             >
-              סיום ושמירה
+              ✓ סיימתי קניות
             </button>
           </div>
         )}
