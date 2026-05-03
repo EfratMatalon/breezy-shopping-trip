@@ -287,14 +287,14 @@ function Workspace() {
               הרשימה ריקה — בחרו מוצרים מהקטגוריות
             </p>
           ) : (
-            <ul className="space-y-2">
+            <ul className="divide-y divide-border/60 space-y-3">
               {state.selectedItems.map((it) => {
                 const p = productById.get(it.productId);
                 if (!p) return null;
                 return (
                   <li
                     key={it.productId}
-                    className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2"
+                    className="flex items-center gap-2 rounded-xl border border-border/70 bg-background px-3 py-2.5 shadow-sm transition-colors hover:bg-accent/30"
                   >
                     <div className="flex-1">
                       <div className="text-sm font-medium">{p.name}</div>
