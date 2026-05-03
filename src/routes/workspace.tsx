@@ -98,9 +98,9 @@ function Workspace() {
       {/* Quick add */}
       <form
         onSubmit={handleQuickAdd}
-        className="sticky top-2 z-10 flex gap-2 rounded-xl border border-border bg-card/95 p-2 shadow-sm backdrop-blur"
+        className="sticky top-2 z-10 rounded-xl border border-border bg-card/95 p-2 shadow-sm backdrop-blur"
       >
-        <div className="relative flex-1">
+        <div className="relative">
           <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={query}
@@ -109,13 +109,6 @@ function Workspace() {
             className="w-full rounded-md border border-input bg-background py-2 pr-9 pl-3 text-sm outline-none focus:border-ring"
           />
         </div>
-        <button
-          type="submit"
-          disabled={!query.trim()}
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-        >
-          {exactMatch ? "הוספה" : "הוספה חדשה"}
-        </button>
       </form>
 
       {/* Categories */}
