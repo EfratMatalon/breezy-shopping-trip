@@ -234,7 +234,7 @@ function Workspace() {
         <button
           type="button"
           onClick={() => setCartOpen(true)}
-          className="fixed bottom-6 left-6 z-30 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-lg transition-transform hover:scale-105"
+          className="fixed bottom-6 right-6 z-30 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-lg transition-transform hover:scale-105"
           aria-label="הצג רשימה"
         >
           <ShoppingCart className="h-5 w-5" />
