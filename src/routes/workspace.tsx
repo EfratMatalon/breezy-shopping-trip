@@ -104,7 +104,7 @@ function Workspace() {
     } else {
       const product = addUserProduct(name, "מוצרי יסוד");
       addSelectedItem(product.id, 1);
-      setOpenCategories((s) => ({ ...s, "מוצרי יסוד": true }));
+      setOpenCategory("מוצרי יסוד");
     }
     setQuery("");
   };
@@ -118,7 +118,7 @@ function Workspace() {
   };
 
   const toggleCategory = (c: string) =>
-    setOpenCategories((s) => ({ ...s, [c]: !s[c] }));
+    setOpenCategory((curr) => (curr === c ? null : c));
 
   const isSearching = query.trim().length > 0;
 
