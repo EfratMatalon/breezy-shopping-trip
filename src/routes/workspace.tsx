@@ -13,6 +13,19 @@ export const Route = createFileRoute("/workspace")({
   component: Workspace,
 });
 
+const CATEGORY_TINTS: Record<string, { bg: string; ring: string }> = {
+  "פירות":           { bg: "var(--cat-fruits)",     ring: "oklch(0.85 0.09 70)" },
+  "ירקות":           { bg: "var(--cat-vegetables)", ring: "oklch(0.82 0.1 145)" },
+  "מוצרי חלב":       { bg: "var(--cat-dairy)",      ring: "oklch(0.82 0.08 240)" },
+  "מאפים":           { bg: "var(--cat-bakery)",     ring: "oklch(0.82 0.08 60)" },
+  "בשר ודגים":       { bg: "var(--cat-meat)",       ring: "oklch(0.82 0.09 25)" },
+  "קפואים":          { bg: "var(--cat-frozen)",     ring: "oklch(0.82 0.08 220)" },
+  "שתייה":           { bg: "var(--cat-drinks)",     ring: "oklch(0.82 0.09 200)" },
+  "חטיפים ומתוקים":  { bg: "var(--cat-snacks)",     ring: "oklch(0.82 0.1 340)" },
+  "ניקיון":          { bg: "var(--cat-cleaning)",   ring: "oklch(0.82 0.07 180)" },
+  "מוצרי יסוד":      { bg: "var(--cat-basics)",     ring: "oklch(0.85 0.03 260)" },
+};
+
 function Workspace() {
   const {
     state,
@@ -136,15 +149,17 @@ function Workspace() {
             (sum, p) => sum + (quantityFor(p.id) > 0 ? 1 : 0),
             0,
           );
+          const tint = CATEGORY_TINTS[category];
           return (
             <div
               key={category}
-              className="overflow-hidden rounded-lg border border-border bg-card"
+              className="overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-sm"
             >
               <button
                 type="button"
                 onClick={() => toggleCategory(category)}
-                className="flex w-full items-center justify-between px-4 py-3 text-right hover:bg-accent/50"
+                style={{ backgroundColor: tint?.bg }}
+                className="flex w-full items-center justify-between px-4 py-3 text-right transition-colors hover:brightness-95"
                 aria-expanded={isOpen}
               >
                 <div className="flex items-center gap-2">
@@ -159,7 +174,7 @@ function Workspace() {
                 </div>
                 <div className="flex items-center gap-2">
                   {selectedInCat > 0 && (
-                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                    <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
                       {selectedInCat}
                     </span>
                   )}
@@ -167,7 +182,10 @@ function Workspace() {
                 </div>
               </button>
               {isOpen && (
-                <div className="grid grid-cols-2 gap-2 border-t border-border p-3 sm:grid-cols-3">
+                <div
+                  className="grid grid-cols-2 gap-2 border-t border-border p-3 sm:grid-cols-3"
+                  style={{ backgroundColor: tint ? `color-mix(in oklab, ${tint.bg} 55%, var(--card))` : undefined }}
+                >
                   {products.length === 0 ? (
                     <p className="col-span-full text-center text-xs text-muted-foreground">
                       אין מוצרים בקטגוריה זו
@@ -190,10 +208,10 @@ function Workspace() {
                             }
                           }}
                           style={isBumped ? { animation: "bump 0.35s ease-out" } : undefined}
-                          className={`group flex cursor-pointer items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-md active:scale-[0.98] ${
+                          className={`group flex cursor-pointer items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
                             isSelected
-                              ? "border-primary bg-primary/10"
-                              : "border-border bg-background hover:bg-accent/40"
+                              ? "border-primary/40 bg-[var(--primary-soft)] ring-1 ring-primary/30"
+                              : "border-border bg-background/85 hover:border-primary/40 hover:bg-background"
                           }`}
                         >
                           <span className="flex-1 truncate text-right font-medium">
