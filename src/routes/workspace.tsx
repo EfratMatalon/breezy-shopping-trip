@@ -171,50 +171,58 @@ function Workspace() {
                       return (
                         <div
                           key={p.id}
-                          className={`flex items-center justify-between rounded-lg border bg-background px-3 py-2 transition-colors ${
-                            isSelected ? "border-primary" : "border-border"
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => addSelectedItem(p.id, 1)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              addSelectedItem(p.id, 1);
+                            }
+                          }}
+                          className={`group flex cursor-pointer items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm transition-all hover:border-primary/60 hover:shadow-sm ${
+                            isSelected
+                              ? "border-primary bg-primary/10"
+                              : "border-border bg-background hover:bg-accent/40"
                           }`}
                         >
-                          <button
-                            type="button"
-                            onClick={() => addSelectedItem(p.id, 1)}
-                            className="flex-1 text-right text-sm"
-                          >
+                          <span className="flex-1 truncate text-right font-medium">
                             {p.name}
-                          </button>
+                          </span>
                           {isSelected ? (
-                            <div className="flex items-center gap-1">
+                            <div
+                              className="flex items-center gap-1"
+                              onClick={(e) => e.stopPropagation()}
+                            >
                               <button
                                 type="button"
                                 onClick={() =>
                                   updateSelectedQuantity(p.id, qty - 1)
                                 }
-                                className="rounded-md p-1 text-muted-foreground hover:bg-accent"
+                                className="rounded-md p-1 text-muted-foreground hover:bg-background"
                                 aria-label="הפחתה"
                               >
                                 <Minus className="h-4 w-4" />
                               </button>
-                              <span className="min-w-[1.25rem] text-center text-sm font-medium">
+                              <span className="min-w-[1.25rem] text-center text-sm font-semibold text-primary">
                                 {qty}
                               </span>
                               <button
                                 type="button"
                                 onClick={() => addSelectedItem(p.id, 1)}
-                                className="rounded-md p-1 text-primary hover:bg-accent"
+                                className="rounded-md bg-primary p-1 text-primary-foreground hover:bg-primary/90"
                                 aria-label="הוספה"
                               >
                                 <Plus className="h-4 w-4" />
                               </button>
                             </div>
                           ) : (
-                            <button
-                              type="button"
-                              onClick={() => addSelectedItem(p.id, 1)}
-                              className="rounded-md bg-primary/10 p-1.5 text-primary hover:bg-primary/20"
-                              aria-label={`הוסף ${p.name}`}
+                            <span
+                              className="rounded-md bg-primary/10 p-1.5 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
+                              aria-hidden
                             >
                               <Plus className="h-4 w-4" />
-                            </button>
+                            </span>
                           )}
                         </div>
                       );
