@@ -212,6 +212,7 @@ function Workspace() {
           return (
             <div
               key={`${category}-panel`}
+              style={{ animation: "expand 0.25s ease-out" }}
               className="col-span-2 overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm sm:col-span-3"
             >
               <div
