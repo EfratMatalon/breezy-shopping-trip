@@ -94,6 +94,35 @@ function Workspace() {
   const quantityFor = (productId: string) =>
     state.selectedItems.find((i) => i.productId === productId)?.quantity ?? 0;
 
+  // Smart suggestions: products that appeared 2+ times in past lists,
+  // not currently selected, and not dismissed. Max 2 per category.
+  const suggestionsByCategory = useMemo(() => {
+    const counts = new Map<string, number>();
+    state.shoppingLists.forEach((list) => {
+      const seen = new Set<string>();
+      list.items.forEach((it) => {
+        if (seen.has(it.productId)) return;
+        seen.add(it.productId);
+        counts.set(it.productId, (counts.get(it.productId) ?? 0) + 1);
+      });
+    });
+    const selectedIds = new Set(state.selectedItems.map((i) => i.productId));
+    const dismissed = new Set(state.dismissedSuggestions);
+    const byCat = new Map<string, Product[]>();
+    CATEGORY_ORDER.forEach((c) => byCat.set(c, []));
+    Array.from(counts.entries())
+      .filter(([id, n]) => n >= 2 && !selectedIds.has(id) && !dismissed.has(id))
+      .sort((a, b) => b[1] - a[1])
+      .forEach(([id]) => {
+        const p = productById.get(id);
+        if (!p) return;
+        const key = p.category && byCat.has(p.category) ? p.category : "מוצרי יסוד";
+        const arr = byCat.get(key)!;
+        if (arr.length < 2) arr.push(p);
+      });
+    return byCat;
+  }, [state.shoppingLists, state.selectedItems, state.dismissedSuggestions, productById]);
+
   const exactMatch = allProducts.find((p) => p.name === query.trim());
 
   const handleQuickAdd = (e: React.FormEvent) => {
