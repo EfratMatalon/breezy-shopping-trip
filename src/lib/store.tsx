@@ -171,6 +171,7 @@ type AppStore = {
   updateSelectedQuantity: (productId: string, quantity: number) => void;
   removeSelectedItem: (productId: string) => void;
   clearSelectedItems: () => void;
+  replaceSelectedItems: (items: SelectedItem[]) => void;
   // products
   addUserProduct: (name: string, category?: string) => Product;
   removeUserProduct: (productId: string) => void;
@@ -245,6 +246,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
     const clearSelectedItems: AppStore["clearSelectedItems"] = () =>
       setState((s) => ({ ...s, selectedItems: [] }));
+
+    const replaceSelectedItems: AppStore["replaceSelectedItems"] = (items) =>
+      setState((s) => ({
+        ...s,
+        selectedItems: items.map((i) => ({ ...i })),
+      }));
 
     const addUserProduct: AppStore["addUserProduct"] = (name, category) => {
       const product: Product = {
