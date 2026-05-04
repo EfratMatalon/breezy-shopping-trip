@@ -145,8 +145,17 @@ function Workspace() {
 
   const finishList = () => {
     if (state.selectedItems.length === 0) return;
+    const count = state.selectedItems.reduce((s, i) => s + i.quantity, 0);
     saveCurrentList();
     startNewCycle();
+    setCartOpen(false);
+    setOpenCategory(CATEGORY_ORDER[0] ?? null);
+    setQuery("");
+    setFinishedCount(count);
+    setTimeout(() => {
+      setFinishedCount(null);
+      navigate({ to: "/" });
+    }, 1600);
   };
 
   const toggleCategory = (c: string) =>
