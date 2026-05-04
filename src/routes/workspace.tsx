@@ -38,9 +38,11 @@ function Workspace() {
     dismissSuggestion,
   } = useAppState();
 
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
   const [bumpedId, setBumpedId] = useState<string | null>(null);
+  const [finishedCount, setFinishedCount] = useState<number | null>(null);
   const [openCategory, setOpenCategory] = useState<string | null>(
     CATEGORY_ORDER[0] ?? null,
   );
