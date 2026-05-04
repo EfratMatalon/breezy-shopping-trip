@@ -314,6 +314,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       updateSelectedQuantity,
       removeSelectedItem,
       clearSelectedItems,
+      replaceSelectedItems,
       addUserProduct,
       removeUserProduct,
       getProduct,
