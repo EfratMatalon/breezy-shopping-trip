@@ -312,11 +312,11 @@ function Workspace() {
                 </div>
               )}
               <div
-                className="grid grid-cols-2 gap-2 border-t border-border p-3 sm:grid-cols-3"
+                className="flex flex-wrap gap-1.5 border-t border-border px-2.5 py-2"
                 style={{ backgroundColor: tint ? `color-mix(in oklab, ${tint.bg} 55%, var(--card))` : undefined }}
               >
                 {products.length === 0 ? (
-                  <p className="col-span-full text-center text-xs text-muted-foreground">
+                  <p className="w-full text-center text-xs text-muted-foreground">
                     אין מוצרים בקטגוריה זו
                   </p>
                 ) : (
@@ -337,50 +337,48 @@ function Workspace() {
                           }
                         }}
                         style={isBumped ? { animation: "bump 0.35s ease-out" } : undefined}
-                        className={`group flex cursor-pointer items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
+                        className={`group inline-flex cursor-pointer items-center gap-1 rounded-full border py-1 pl-1 pr-2.5 text-xs transition-all duration-200 hover:shadow-sm active:scale-95 ${
                           isSelected
                             ? "border-primary/40 bg-[var(--primary-soft)] ring-1 ring-primary/30"
                             : "border-border bg-background/85 hover:border-primary/40 hover:bg-background"
                         }`}
                       >
-                        <span className="flex-1 truncate text-right font-medium">
-                          {p.name}
-                        </span>
+                        <span className="font-medium">{p.name}</span>
                         {isSelected ? (
                           <div
-                            className="flex items-center gap-1"
+                            className="flex items-center gap-0.5"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <button
                               type="button"
                               onClick={() => handleQtyChange(p.id, qty - 1)}
-                              className="rounded-md p-1 text-muted-foreground transition-all hover:bg-background hover:scale-110 active:scale-95"
+                              className="rounded-full p-0.5 text-muted-foreground transition-all hover:bg-background active:scale-90"
                               aria-label="הפחתה"
                             >
-                              <Minus className="h-4 w-4" />
+                              <Minus className="h-3 w-3" />
                             </button>
                             <span
                               key={qty}
                               style={{ animation: "pop 0.25s ease-out" }}
-                              className="min-w-[1.25rem] text-center text-sm font-semibold text-primary"
+                              className="min-w-[0.9rem] text-center text-[11px] font-semibold text-primary"
                             >
                               {qty}
                             </span>
                             <button
                               type="button"
                               onClick={() => handleAdd(p.id)}
-                              className="rounded-md bg-primary p-1 text-primary-foreground transition-all hover:bg-primary/90 hover:scale-110 active:scale-95"
+                              className="rounded-full bg-primary p-0.5 text-primary-foreground transition-all hover:bg-primary/90 active:scale-90"
                               aria-label="הוספה"
                             >
-                              <Plus className="h-4 w-4" />
+                              <Plus className="h-3 w-3" />
                             </button>
                           </div>
                         ) : (
                           <span
-                            className="rounded-md bg-primary/10 p-1.5 text-primary transition-all group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110"
+                            className="rounded-full bg-primary/10 p-0.5 text-primary transition-all group-hover:bg-primary group-hover:text-primary-foreground"
                             aria-hidden
                           >
-                            <Plus className="h-4 w-4" />
+                            <Plus className="h-3 w-3" />
                           </span>
                         )}
                       </div>
