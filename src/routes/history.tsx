@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useAppState } from "../lib/store";
 
@@ -23,8 +23,9 @@ function formatDate(ts: number) {
 }
 
 function History() {
-  const { state, getProduct, deleteList } = useAppState();
+  const { state, getProduct, deleteList, replaceSelectedItems } = useAppState();
   const [openId, setOpenId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const lists = useMemo(
     () =>
@@ -108,7 +109,21 @@ function History() {
                       );
                     })}
                   </ul>
-                  <div className="mt-3 flex justify-end">
+                  <div className="mt-3 flex items-center justify-between gap-2">
+                    <button
+                      onClick={() => {
+                        if (
+                          state.selectedItems.length === 0 ||
+                          confirm("הפעולה תחליף את הרשימה הנוכחית. להמשיך?")
+                        ) {
+                          replaceSelectedItems(list.items);
+                          navigate({ to: "/workspace" });
+                        }
+                      }}
+                      className="inline-flex items-center justify-center rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+                    >
+                      השתמש שוב ברשימה
+                    </button>
                     <button
                       onClick={() => {
                         if (confirm("למחוק את הרשימה הזו?")) {
