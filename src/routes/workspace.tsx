@@ -552,6 +552,24 @@ function Workspace() {
           </div>
         )}
       </aside>
+
+      {finishedCount !== null && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm"
+          style={{ animation: "expand 0.2s ease-out" }}
+        >
+          <div className="mx-4 flex flex-col items-center gap-2 rounded-2xl bg-card px-8 py-6 text-center shadow-2xl">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-3xl text-primary-foreground shadow-lg">
+              ✓
+            </div>
+            <h3 className="text-lg font-bold">הקנייה נשמרה!</h3>
+            <p className="text-sm text-muted-foreground">
+              {finishedCount} פריטים נוספו להיסטוריה
+            </p>
+            <p className="text-xs text-muted-foreground">מתחילים רשימה חדשה…</p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
