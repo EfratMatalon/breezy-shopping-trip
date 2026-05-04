@@ -222,25 +222,27 @@ function Workspace() {
               key={category}
               type="button"
               onClick={() => toggleCategory(category)}
-              style={{ backgroundColor: tint?.bg }}
+              style={{ background: tint?.grad ?? tint?.bg }}
               aria-expanded={isOpen}
-              className={`relative flex flex-col items-center justify-center gap-1 rounded-xl border bg-card px-2 py-2.5 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
-                isOpen ? "border-primary/50 ring-2 ring-primary/30" : "border-border/70"
+              className={`group relative flex flex-col items-center justify-center gap-1 rounded-2xl border px-2 py-2.5 text-center transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.02] hover:brightness-105 active:scale-[0.97] ${
+                isOpen
+                  ? "border-primary/50 shadow-[0_8px_24px_-10px_color-mix(in_oklab,var(--primary)_45%,transparent)] ring-2 ring-primary/30"
+                  : "border-white/60 shadow-[0_4px_14px_-6px_oklch(0.4_0.05_270/0.18)]"
               }`}
             >
               {selectedInCat > 0 && (
-                <span className="absolute right-1.5 top-1.5 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground shadow">
+                <span className="absolute right-1.5 top-1.5 rounded-full bg-gradient-to-br from-primary to-[var(--primary-glow)] px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground shadow-md">
                   {selectedInCat}
                 </span>
               )}
               <span
-                className="flex h-8 w-8 items-center justify-center rounded-xl bg-background/70 text-base shadow-sm ring-1 ring-border/50"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-base shadow-sm ring-1 ring-white/70 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110"
                 aria-hidden
               >
                 {tint?.icon ?? "🛒"}
               </span>
-              <span className="text-[13px] font-semibold leading-tight">{category}</span>
-              <span className="text-[10px] text-muted-foreground">
+              <span className="text-[13px] font-semibold leading-tight text-foreground/90">{category}</span>
+              <span className="text-[10px] text-foreground/50">
                 {products.length} מוצרים
               </span>
             </button>
