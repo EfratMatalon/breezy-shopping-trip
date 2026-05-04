@@ -213,23 +213,23 @@ function Workspace() {
               onClick={() => toggleCategory(category)}
               style={{ backgroundColor: tint?.bg }}
               aria-expanded={isOpen}
-              className={`relative flex aspect-square flex-col items-center justify-center gap-2 rounded-2xl border bg-card p-3 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
+              className={`relative flex flex-col items-center justify-center gap-1 rounded-xl border bg-card px-2 py-2.5 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
                 isOpen ? "border-primary/50 ring-2 ring-primary/30" : "border-border/70"
               }`}
             >
               {selectedInCat > 0 && (
-                <span className="absolute right-2 top-2 rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground shadow">
+                <span className="absolute right-1.5 top-1.5 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground shadow">
                   {selectedInCat}
                 </span>
               )}
               <span
-                className="flex h-12 w-12 items-center justify-center rounded-2xl bg-background/70 text-2xl shadow-sm ring-1 ring-border/50"
+                className="flex h-8 w-8 items-center justify-center rounded-xl bg-background/70 text-base shadow-sm ring-1 ring-border/50"
                 aria-hidden
               >
                 {tint?.icon ?? "🛒"}
               </span>
-              <span className="text-sm font-semibold leading-tight">{category}</span>
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-[13px] font-semibold leading-tight">{category}</span>
+              <span className="text-[10px] text-muted-foreground">
                 {products.length} מוצרים
               </span>
             </button>
