@@ -257,24 +257,24 @@ function Workspace() {
             <div
               key={`${category}-panel`}
               style={{ animation: "expand 0.25s ease-out" }}
-              className="col-span-2 overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm sm:col-span-3"
+              className="col-span-2 overflow-hidden rounded-2xl border border-white/60 bg-card shadow-[0_8px_24px_-12px_oklch(0.4_0.05_270/0.25)] sm:col-span-3"
             >
               <div
-                style={{ backgroundColor: tint?.bg }}
-                className="flex items-center justify-between px-3 py-1.5"
+                style={{ background: tint?.grad ?? tint?.bg }}
+                className="flex items-center justify-between px-3 py-2"
               >
                 <button
                   type="button"
                   onClick={() => toggleCategory(category)}
-                  className="rounded-md p-0.5 text-muted-foreground transition-colors hover:bg-background/60"
+                  className="rounded-full p-1 text-foreground/60 transition-all hover:bg-white/60 hover:text-foreground active:scale-90"
                   aria-label="סגור קטגוריה"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold">{category}</span>
+                  <span className="text-sm font-semibold text-foreground/90">{category}</span>
                   <span
-                    className="flex h-6 w-6 items-center justify-center rounded-lg bg-background/70 text-sm shadow-sm ring-1 ring-border/50"
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-white/80 text-sm shadow-sm ring-1 ring-white/70 backdrop-blur-sm"
                     aria-hidden
                   >
                     {tint?.icon ?? "🛒"}
