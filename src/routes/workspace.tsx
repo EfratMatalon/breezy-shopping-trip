@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Minus, X, Search, ShoppingCart, Sparkles } from "lucide-react";
 import { useAppState, CATEGORY_ORDER, type Product } from "../lib/store";
