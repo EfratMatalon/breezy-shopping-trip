@@ -544,7 +544,7 @@ function Workspace() {
             </div>
             <button
               onClick={finishList}
-              className="w-full rounded-lg bg-primary px-4 py-3 text-base font-bold text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
+              className="w-full rounded-xl bg-gradient-to-br from-primary to-[var(--primary-glow)] px-4 py-3 text-base font-bold text-primary-foreground shadow-[0_10px_24px_-10px_color-mix(in_oklab,var(--primary)_50%,transparent)] transition-all duration-200 hover:brightness-110 hover:shadow-lg active:scale-[0.97]"
             >
               ✓ סיימתי קניות
             </button>
