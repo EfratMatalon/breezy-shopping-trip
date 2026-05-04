@@ -424,7 +424,7 @@ function Workspace() {
         <button
           type="button"
           onClick={() => setCartOpen(true)}
-          className="fixed bottom-6 right-6 z-30 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-lg transition-transform hover:scale-105"
+          className="fixed bottom-6 right-6 z-30 flex items-center gap-2 rounded-full bg-gradient-to-br from-primary to-[var(--primary-glow)] px-5 py-3 text-sm font-medium text-primary-foreground shadow-[0_10px_30px_-10px_color-mix(in_oklab,var(--primary)_50%,transparent)] transition-all duration-200 hover:scale-105 hover:brightness-110 active:scale-95"
           aria-label="הצג רשימה"
         >
           <ShoppingCart className="h-5 w-5" />
