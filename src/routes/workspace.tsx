@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Minus, X, Search, ShoppingCart, Sparkles } from "lucide-react";
 import { useAppState, CATEGORY_ORDER, type Product } from "../lib/store";
@@ -38,9 +38,11 @@ function Workspace() {
     dismissSuggestion,
   } = useAppState();
 
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
   const [bumpedId, setBumpedId] = useState<string | null>(null);
+  const [finishedCount, setFinishedCount] = useState<number | null>(null);
   const [openCategory, setOpenCategory] = useState<string | null>(
     CATEGORY_ORDER[0] ?? null,
   );
@@ -143,8 +145,17 @@ function Workspace() {
 
   const finishList = () => {
     if (state.selectedItems.length === 0) return;
+    const count = state.selectedItems.reduce((s, i) => s + i.quantity, 0);
     saveCurrentList();
     startNewCycle();
+    setCartOpen(false);
+    setOpenCategory(CATEGORY_ORDER[0] ?? null);
+    setQuery("");
+    setFinishedCount(count);
+    setTimeout(() => {
+      setFinishedCount(null);
+      navigate({ to: "/" });
+    }, 1600);
   };
 
   const toggleCategory = (c: string) =>
@@ -530,10 +541,7 @@ function Workspace() {
               <span className="font-semibold">{totalCount}</span>
             </div>
             <button
-              onClick={() => {
-                finishList();
-                setCartOpen(false);
-              }}
+              onClick={finishList}
               className="w-full rounded-lg bg-primary px-4 py-3 text-base font-bold text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
             >
               ✓ סיימתי קניות
@@ -541,6 +549,24 @@ function Workspace() {
           </div>
         )}
       </aside>
+
+      {finishedCount !== null && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm"
+          style={{ animation: "expand 0.2s ease-out" }}
+        >
+          <div className="mx-4 flex flex-col items-center gap-2 rounded-2xl bg-card px-8 py-6 text-center shadow-2xl">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-3xl text-primary-foreground shadow-lg">
+              ✓
+            </div>
+            <h3 className="text-lg font-bold">הקנייה נשמרה!</h3>
+            <p className="text-sm text-muted-foreground">
+              {finishedCount} פריטים נוספו להיסטוריה
+            </p>
+            <p className="text-xs text-muted-foreground">מתחילים רשימה חדשה…</p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
