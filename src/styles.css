@@ -62,18 +62,23 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
+  --radius: 0.75rem;
+  --background: oklch(0.985 0.008 260);
+  --app-bg: linear-gradient(180deg, oklch(0.985 0.012 265) 0%, oklch(0.97 0.018 280) 100%);
+  --foreground: oklch(0.18 0.04 265);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
+  --card-foreground: oklch(0.16 0.04 265);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.38 0.13 260);
+  --popover-foreground: oklch(0.16 0.04 265);
+  --primary: oklch(0.45 0.18 275);
   --primary-foreground: oklch(0.99 0.005 250);
-  --primary-soft: oklch(0.95 0.04 260);
+  --primary-glow: oklch(0.62 0.2 290);
+  --primary-soft: oklch(0.94 0.05 275);
+  --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-glow));
+  --shadow-soft: 0 4px 14px -6px color-mix(in oklab, var(--primary) 25%, transparent);
+  --shadow-card: 0 2px 8px -4px oklch(0.4 0.05 270 / 0.15);
 
-  /* Category tints (very soft) */
+  /* Category tints (soft, for soft fills) */
   --cat-fruits: oklch(0.96 0.045 70);
   --cat-vegetables: oklch(0.96 0.05 145);
   --cat-dairy: oklch(0.96 0.04 240);
@@ -84,6 +89,18 @@
   --cat-snacks: oklch(0.95 0.05 340);
   --cat-cleaning: oklch(0.96 0.035 180);
   --cat-basics: oklch(0.96 0.015 260);
+
+  /* Category gradients (pastel modern) */
+  --cat-grad-fruits: linear-gradient(135deg, oklch(0.95 0.07 35), oklch(0.93 0.08 70));
+  --cat-grad-vegetables: linear-gradient(135deg, oklch(0.94 0.08 145), oklch(0.93 0.07 175));
+  --cat-grad-dairy: linear-gradient(135deg, oklch(0.95 0.05 240), oklch(0.94 0.06 220));
+  --cat-grad-bakery: linear-gradient(135deg, oklch(0.94 0.07 70), oklch(0.93 0.08 50));
+  --cat-grad-meat: linear-gradient(135deg, oklch(0.93 0.07 25), oklch(0.92 0.08 10));
+  --cat-grad-frozen: linear-gradient(135deg, oklch(0.94 0.06 220), oklch(0.93 0.07 250));
+  --cat-grad-drinks: linear-gradient(135deg, oklch(0.94 0.07 200), oklch(0.93 0.08 220));
+  --cat-grad-snacks: linear-gradient(135deg, oklch(0.94 0.07 340), oklch(0.93 0.08 320));
+  --cat-grad-cleaning: linear-gradient(135deg, oklch(0.94 0.06 180), oklch(0.93 0.07 200));
+  --cat-grad-basics: linear-gradient(135deg, oklch(0.95 0.03 260), oklch(0.93 0.04 280));
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
@@ -151,7 +168,8 @@
   }
 
   body {
-    background-color: var(--color-background);
+    background: var(--app-bg, var(--color-background));
+    background-attachment: fixed;
     color: var(--color-foreground);
   }
 }

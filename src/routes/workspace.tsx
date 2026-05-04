@@ -13,17 +13,17 @@ export const Route = createFileRoute("/workspace")({
   component: Workspace,
 });
 
-const CATEGORY_TINTS: Record<string, { bg: string; icon: string }> = {
-  "פירות":           { bg: "var(--cat-fruits)",     icon: "🍎" },
-  "ירקות":           { bg: "var(--cat-vegetables)", icon: "🥬" },
-  "מוצרי חלב":       { bg: "var(--cat-dairy)",      icon: "🥛" },
-  "מאפים":           { bg: "var(--cat-bakery)",     icon: "🍞" },
-  "בשר ודגים":       { bg: "var(--cat-meat)",       icon: "🍗" },
-  "קפואים":          { bg: "var(--cat-frozen)",     icon: "🧊" },
-  "שתייה":           { bg: "var(--cat-drinks)",     icon: "🥤" },
-  "חטיפים ומתוקים":  { bg: "var(--cat-snacks)",     icon: "🍫" },
-  "ניקיון":          { bg: "var(--cat-cleaning)",   icon: "🧼" },
-  "מוצרי יסוד":      { bg: "var(--cat-basics)",     icon: "🛒" },
+const CATEGORY_TINTS: Record<string, { bg: string; grad: string; icon: string }> = {
+  "פירות":           { bg: "var(--cat-fruits)",     grad: "var(--cat-grad-fruits)",     icon: "🍎" },
+  "ירקות":           { bg: "var(--cat-vegetables)", grad: "var(--cat-grad-vegetables)", icon: "🥬" },
+  "מוצרי חלב":       { bg: "var(--cat-dairy)",      grad: "var(--cat-grad-dairy)",      icon: "🥛" },
+  "מאפים":           { bg: "var(--cat-bakery)",     grad: "var(--cat-grad-bakery)",     icon: "🍞" },
+  "בשר ודגים":       { bg: "var(--cat-meat)",       grad: "var(--cat-grad-meat)",       icon: "🍗" },
+  "קפואים":          { bg: "var(--cat-frozen)",     grad: "var(--cat-grad-frozen)",     icon: "🧊" },
+  "שתייה":           { bg: "var(--cat-drinks)",     grad: "var(--cat-grad-drinks)",     icon: "🥤" },
+  "חטיפים ומתוקים":  { bg: "var(--cat-snacks)",     grad: "var(--cat-grad-snacks)",     icon: "🍫" },
+  "ניקיון":          { bg: "var(--cat-cleaning)",   grad: "var(--cat-grad-cleaning)",   icon: "🧼" },
+  "מוצרי יסוד":      { bg: "var(--cat-basics)",     grad: "var(--cat-grad-basics)",     icon: "🛒" },
 };
 
 function Workspace() {
@@ -222,25 +222,27 @@ function Workspace() {
               key={category}
               type="button"
               onClick={() => toggleCategory(category)}
-              style={{ backgroundColor: tint?.bg }}
+              style={{ background: tint?.grad ?? tint?.bg }}
               aria-expanded={isOpen}
-              className={`relative flex flex-col items-center justify-center gap-1 rounded-xl border bg-card px-2 py-2.5 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
-                isOpen ? "border-primary/50 ring-2 ring-primary/30" : "border-border/70"
+              className={`group relative flex flex-col items-center justify-center gap-1 rounded-2xl border px-2 py-2.5 text-center transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.02] hover:brightness-105 active:scale-[0.97] ${
+                isOpen
+                  ? "border-primary/50 shadow-[0_8px_24px_-10px_color-mix(in_oklab,var(--primary)_45%,transparent)] ring-2 ring-primary/30"
+                  : "border-white/60 shadow-[0_4px_14px_-6px_oklch(0.4_0.05_270/0.18)]"
               }`}
             >
               {selectedInCat > 0 && (
-                <span className="absolute right-1.5 top-1.5 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground shadow">
+                <span className="absolute right-1.5 top-1.5 rounded-full bg-gradient-to-br from-primary to-[var(--primary-glow)] px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground shadow-md">
                   {selectedInCat}
                 </span>
               )}
               <span
-                className="flex h-8 w-8 items-center justify-center rounded-xl bg-background/70 text-base shadow-sm ring-1 ring-border/50"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-base shadow-sm ring-1 ring-white/70 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110"
                 aria-hidden
               >
                 {tint?.icon ?? "🛒"}
               </span>
-              <span className="text-[13px] font-semibold leading-tight">{category}</span>
-              <span className="text-[10px] text-muted-foreground">
+              <span className="text-[13px] font-semibold leading-tight text-foreground/90">{category}</span>
+              <span className="text-[10px] text-foreground/50">
                 {products.length} מוצרים
               </span>
             </button>
@@ -255,24 +257,24 @@ function Workspace() {
             <div
               key={`${category}-panel`}
               style={{ animation: "expand 0.25s ease-out" }}
-              className="col-span-2 overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm sm:col-span-3"
+              className="col-span-2 overflow-hidden rounded-2xl border border-white/60 bg-card shadow-[0_8px_24px_-12px_oklch(0.4_0.05_270/0.25)] sm:col-span-3"
             >
               <div
-                style={{ backgroundColor: tint?.bg }}
-                className="flex items-center justify-between px-3 py-1.5"
+                style={{ background: tint?.grad ?? tint?.bg }}
+                className="flex items-center justify-between px-3 py-2"
               >
                 <button
                   type="button"
                   onClick={() => toggleCategory(category)}
-                  className="rounded-md p-0.5 text-muted-foreground transition-colors hover:bg-background/60"
+                  className="rounded-full p-1 text-foreground/60 transition-all hover:bg-white/60 hover:text-foreground active:scale-90"
                   aria-label="סגור קטגוריה"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold">{category}</span>
+                  <span className="text-sm font-semibold text-foreground/90">{category}</span>
                   <span
-                    className="flex h-6 w-6 items-center justify-center rounded-lg bg-background/70 text-sm shadow-sm ring-1 ring-border/50"
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-white/80 text-sm shadow-sm ring-1 ring-white/70 backdrop-blur-sm"
                     aria-hidden
                   >
                     {tint?.icon ?? "🛒"}
@@ -422,7 +424,7 @@ function Workspace() {
         <button
           type="button"
           onClick={() => setCartOpen(true)}
-          className="fixed bottom-6 right-6 z-30 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-lg transition-transform hover:scale-105"
+          className="fixed bottom-6 right-6 z-30 flex items-center gap-2 rounded-full bg-gradient-to-br from-primary to-[var(--primary-glow)] px-5 py-3 text-sm font-medium text-primary-foreground shadow-[0_10px_30px_-10px_color-mix(in_oklab,var(--primary)_50%,transparent)] transition-all duration-200 hover:scale-105 hover:brightness-110 active:scale-95"
           aria-label="הצג רשימה"
         >
           <ShoppingCart className="h-5 w-5" />
@@ -542,7 +544,7 @@ function Workspace() {
             </div>
             <button
               onClick={finishList}
-              className="w-full rounded-lg bg-primary px-4 py-3 text-base font-bold text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
+              className="w-full rounded-xl bg-gradient-to-br from-primary to-[var(--primary-glow)] px-4 py-3 text-base font-bold text-primary-foreground shadow-[0_10px_24px_-10px_color-mix(in_oklab,var(--primary)_50%,transparent)] transition-all duration-200 hover:brightness-110 hover:shadow-lg active:scale-[0.97]"
             >
               ✓ סיימתי קניות
             </button>
