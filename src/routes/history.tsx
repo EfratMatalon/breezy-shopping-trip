@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { loadHistory, saveHistory, type ShoppingList } from "../lib/shopping";
+import { useMemo, useState } from "react";
+import { useAppState } from "../lib/store";
 
 export const Route = createFileRoute("/history")({
   head: () => ({
@@ -12,55 +12,35 @@ export const Route = createFileRoute("/history")({
   component: History,
 });
 
+function formatDate(ts: number) {
+  return new Date(ts).toLocaleString("he-IL", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 function History() {
-  const [lists, setLists] = useState<ShoppingList[]>([]);
-  const [hydrated, setHydrated] = useState(false);
+  const { state, getProduct, deleteList } = useAppState();
+  const [openId, setOpenId] = useState<string | null>(null);
 
-  useEffect(() => {
-    setLists(loadHistory());
-    setHydrated(true);
-  }, []);
+  const lists = useMemo(
+    () =>
+      [...state.shoppingLists]
+        .sort((a, b) => b.savedAt - a.savedAt)
+        .slice(0, 10),
+    [state.shoppingLists],
+  );
 
-  const remove = (id: string) => {
-    if (!confirm("למחוק את הרשימה הזו?")) return;
-    const next = lists.filter((l) => l.id !== id);
-    setLists(next);
-    saveHistory(next);
-  };
-
-  const clearAll = () => {
-    if (!confirm("למחוק את כל ההיסטוריה?")) return;
-    setLists([]);
-    saveHistory([]);
-  };
-
-  if (!hydrated) return null;
-
-  return (
-    <section>
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight">היסטוריה</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {lists.length === 0
-              ? "אין עדיין רשימות שמורות."
-              : `${lists.length} רשימות שמורות`}
-          </p>
-        </div>
-        {lists.length > 0 && (
-          <button
-            onClick={clearAll}
-            className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent"
-          >
-            מחיקת הכל
-          </button>
-        )}
-      </div>
-
-      {lists.length === 0 ? (
-        <div className="mt-16 rounded-lg border border-dashed border-border p-12 text-center">
+  if (lists.length === 0) {
+    return (
+      <section>
+        <h1 className="text-3xl font-semibold tracking-tight">היסטוריה</h1>
+        <div className="mt-12 rounded-xl border border-dashed border-border p-12 text-center">
           <p className="text-sm text-muted-foreground">
-            סיימו רשימה ושמרו אותה כדי שתופיע כאן.
+            עדיין לא סיימת רשימות. כשתסיים קנייה — היא תופיע כאן.
           </p>
           <Link
             to="/workspace"
@@ -69,44 +49,84 @@ function History() {
             לרשימה שלי
           </Link>
         </div>
-      ) : (
-        <ul className="mt-8 space-y-4">
-          {lists.map((list) => {
-            const done = list.items.filter((i) => i.done).length;
-            return (
-              <li key={list.id} className="rounded-lg border border-border bg-card p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h2 className="text-base font-semibold">{list.name}</h2>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {new Date(list.savedAt).toLocaleString("he-IL")} · סומנו {done} מתוך {list.items.length}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => remove(list.id)}
-                    className="text-xs text-muted-foreground hover:text-destructive transition-colors"
-                  >
-                    מחיקה
-                  </button>
+      </section>
+    );
+  }
+
+  return (
+    <section>
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight">היסטוריה</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {lists.length} רשימות אחרונות
+          </p>
+        </div>
+      </div>
+
+      <ul className="mt-6 space-y-2">
+        {lists.map((list) => {
+          const totalItems = list.items.reduce((s, i) => s + i.quantity, 0);
+          const isOpen = openId === list.id;
+          return (
+            <li
+              key={list.id}
+              className="rounded-xl border border-border bg-card overflow-hidden"
+            >
+              <button
+                onClick={() => setOpenId(isOpen ? null : list.id)}
+                className="flex w-full items-center justify-between gap-4 px-4 py-3 text-right transition-colors hover:bg-accent/40"
+              >
+                <div className="flex flex-col">
+                  <span className="text-sm font-semibold">
+                    {formatDate(list.savedAt)}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {list.items.length} מוצרים · {totalItems} פריטים
+                  </span>
                 </div>
-                <ul className="mt-4 grid gap-1 sm:grid-cols-2">
-                  {list.items.map((item) => (
-                    <li
-                      key={item.id}
-                      className={`text-sm ${
-                        item.done ? "line-through text-muted-foreground" : ""
-                      }`}
+                <span className="text-xs text-muted-foreground">
+                  {isOpen ? "סגור" : "פתח"}
+                </span>
+              </button>
+
+              {isOpen && (
+                <div className="border-t border-border bg-background/40 px-4 py-3">
+                  <ul className="grid gap-1 sm:grid-cols-2">
+                    {list.items.map((item) => {
+                      const product = getProduct(item.productId);
+                      return (
+                        <li
+                          key={item.productId}
+                          className="flex items-center justify-between gap-2 rounded-md px-2 py-1 text-sm"
+                        >
+                          <span>{product?.name ?? "מוצר לא ידוע"}</span>
+                          <span className="text-xs text-muted-foreground">
+                            ×{item.quantity}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <div className="mt-3 flex justify-end">
+                    <button
+                      onClick={() => {
+                        if (confirm("למחוק את הרשימה הזו?")) {
+                          deleteList(list.id);
+                          setOpenId(null);
+                        }
+                      }}
+                      className="text-xs text-muted-foreground transition-colors hover:text-destructive"
                     >
-                      • {item.name}{" "}
-                      <span className="text-xs text-muted-foreground">×{item.qty}</span>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+                      מחיקה
+                    </button>
+                  </div>
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
     </section>
   );
 }
