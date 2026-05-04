@@ -98,7 +98,14 @@ function Workspace() {
 
   // Smart suggestions: products that appeared 2+ times in past lists,
   // not currently selected, and not dismissed. Max 2 per category.
+  // Only shown after the user has added at least one item to the current list
+  // (so it feels like a reminder, not a static list on entry).
   const suggestionsByCategory = useMemo(() => {
+    const byCat = new Map<string, Product[]>();
+    CATEGORY_ORDER.forEach((c) => byCat.set(c, []));
+    if (state.selectedItems.length === 0) return byCat;
+    if (state.shoppingLists.length === 0) return byCat;
+
     const counts = new Map<string, number>();
     state.shoppingLists.forEach((list) => {
       const seen = new Set<string>();
@@ -110,8 +117,6 @@ function Workspace() {
     });
     const selectedIds = new Set(state.selectedItems.map((i) => i.productId));
     const dismissed = new Set(state.dismissedSuggestions);
-    const byCat = new Map<string, Product[]>();
-    CATEGORY_ORDER.forEach((c) => byCat.set(c, []));
     Array.from(counts.entries())
       .filter(([id, n]) => n >= 2 && !selectedIds.has(id) && !dismissed.has(id))
       .sort((a, b) => b[1] - a[1])
