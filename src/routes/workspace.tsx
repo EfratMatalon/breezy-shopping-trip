@@ -541,10 +541,7 @@ function Workspace() {
               <span className="font-semibold">{totalCount}</span>
             </div>
             <button
-              onClick={() => {
-                finishList();
-                setCartOpen(false);
-              }}
+              onClick={finishList}
               className="w-full rounded-lg bg-primary px-4 py-3 text-base font-bold text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
             >
               ✓ סיימתי קניות
