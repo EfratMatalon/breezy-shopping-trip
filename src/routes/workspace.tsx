@@ -248,20 +248,20 @@ function Workspace() {
             >
               <div
                 style={{ backgroundColor: tint?.bg }}
-                className="flex items-center justify-between px-4 py-3"
+                className="flex items-center justify-between px-3 py-1.5"
               >
                 <button
                   type="button"
                   onClick={() => toggleCategory(category)}
-                  className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-background/60"
+                  className="rounded-md p-0.5 text-muted-foreground transition-colors hover:bg-background/60"
                   aria-label="סגור קטגוריה"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5" />
                 </button>
-                <div className="flex items-center gap-2.5">
-                  <span className="text-base font-semibold">{category}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold">{category}</span>
                   <span
-                    className="flex h-9 w-9 items-center justify-center rounded-xl bg-background/70 text-lg shadow-sm ring-1 ring-border/50"
+                    className="flex h-6 w-6 items-center justify-center rounded-lg bg-background/70 text-sm shadow-sm ring-1 ring-border/50"
                     aria-hidden
                   >
                     {tint?.icon ?? "🛒"}
