@@ -13,17 +13,17 @@ export const Route = createFileRoute("/workspace")({
   component: Workspace,
 });
 
-const CATEGORY_TINTS: Record<string, { bg: string; icon: string }> = {
-  "פירות":           { bg: "var(--cat-fruits)",     icon: "🍎" },
-  "ירקות":           { bg: "var(--cat-vegetables)", icon: "🥬" },
-  "מוצרי חלב":       { bg: "var(--cat-dairy)",      icon: "🥛" },
-  "מאפים":           { bg: "var(--cat-bakery)",     icon: "🍞" },
-  "בשר ודגים":       { bg: "var(--cat-meat)",       icon: "🍗" },
-  "קפואים":          { bg: "var(--cat-frozen)",     icon: "🧊" },
-  "שתייה":           { bg: "var(--cat-drinks)",     icon: "🥤" },
-  "חטיפים ומתוקים":  { bg: "var(--cat-snacks)",     icon: "🍫" },
-  "ניקיון":          { bg: "var(--cat-cleaning)",   icon: "🧼" },
-  "מוצרי יסוד":      { bg: "var(--cat-basics)",     icon: "🛒" },
+const CATEGORY_TINTS: Record<string, { bg: string; grad: string; icon: string }> = {
+  "פירות":           { bg: "var(--cat-fruits)",     grad: "var(--cat-grad-fruits)",     icon: "🍎" },
+  "ירקות":           { bg: "var(--cat-vegetables)", grad: "var(--cat-grad-vegetables)", icon: "🥬" },
+  "מוצרי חלב":       { bg: "var(--cat-dairy)",      grad: "var(--cat-grad-dairy)",      icon: "🥛" },
+  "מאפים":           { bg: "var(--cat-bakery)",     grad: "var(--cat-grad-bakery)",     icon: "🍞" },
+  "בשר ודגים":       { bg: "var(--cat-meat)",       grad: "var(--cat-grad-meat)",       icon: "🍗" },
+  "קפואים":          { bg: "var(--cat-frozen)",     grad: "var(--cat-grad-frozen)",     icon: "🧊" },
+  "שתייה":           { bg: "var(--cat-drinks)",     grad: "var(--cat-grad-drinks)",     icon: "🥤" },
+  "חטיפים ומתוקים":  { bg: "var(--cat-snacks)",     grad: "var(--cat-grad-snacks)",     icon: "🍫" },
+  "ניקיון":          { bg: "var(--cat-cleaning)",   grad: "var(--cat-grad-cleaning)",   icon: "🧼" },
+  "מוצרי יסוד":      { bg: "var(--cat-basics)",     grad: "var(--cat-grad-basics)",     icon: "🛒" },
 };
 
 function Workspace() {
