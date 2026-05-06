@@ -530,13 +530,32 @@ function Workspace() {
               {state.selectedItems.map((it) => {
                 const p = productById.get(it.productId);
                 if (!p) return null;
+                const collected = collectedIds.has(it.productId);
                 return (
                   <li
                     key={it.productId}
-                    className="flex items-center gap-2 rounded-xl border border-border/70 bg-background px-3 py-2.5 shadow-sm transition-colors hover:bg-accent/30"
+                    className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 shadow-sm transition-all ${
+                      collected
+                        ? "border-primary/40 bg-[var(--primary-soft)]/60"
+                        : "border-border/70 bg-background hover:bg-accent/30"
+                    }`}
                   >
+                    <button
+                      type="button"
+                      onClick={() => toggleCollected(it.productId)}
+                      aria-label={collected ? "ביטול סימון" : "סמן כנאסף"}
+                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all active:scale-90 ${
+                        collected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-background hover:border-primary/60"
+                      }`}
+                    >
+                      {collected && <span className="text-xs font-bold">✓</span>}
+                    </button>
                     <div className="flex-1">
-                      <div className="text-sm font-medium">{p.name}</div>
+                      <div className={`text-sm font-medium ${collected ? "text-muted-foreground line-through" : ""}`}>
+                        {p.name}
+                      </div>
                       {p.category && (
                         <div className="text-xs text-muted-foreground">
                           {p.category}
