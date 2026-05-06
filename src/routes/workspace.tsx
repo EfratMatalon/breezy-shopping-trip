@@ -273,25 +273,25 @@ function Workspace() {
               onClick={() => toggleCategory(category)}
               style={{ background: tint?.grad ?? tint?.bg }}
               aria-expanded={isOpen}
-              className={`group relative flex flex-col items-center justify-center gap-1 rounded-2xl border px-2 py-2.5 text-center transition-all duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.02] hover:brightness-105 active:scale-[0.97] ${
+              className={`group relative flex flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2.5 text-center transition-all duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.98] ${
                 isOpen
-                  ? "border-primary/50 shadow-[0_8px_24px_-10px_color-mix(in_oklab,var(--primary)_45%,transparent)] ring-2 ring-primary/30"
-                  : "border-white/60 shadow-[0_4px_14px_-6px_oklch(0.4_0.05_270/0.18)]"
+                  ? "border-primary/40 shadow-[0_4px_12px_-6px_color-mix(in_oklab,var(--primary)_30%,transparent)] ring-1 ring-primary/25"
+                  : "border-black/[0.04] shadow-[0_1px_2px_-1px_oklch(0.3_0.03_265/0.08),0_1px_3px_-1px_oklch(0.3_0.03_265/0.06)]"
               }`}
             >
               {selectedInCat > 0 && (
-                <span className="absolute right-1.5 top-1.5 rounded-full bg-gradient-to-br from-primary to-[var(--primary-glow)] px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground shadow-md">
+                <span className="absolute right-1.5 top-1.5 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground shadow-sm">
                   {selectedInCat}
                 </span>
               )}
               <span
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-base shadow-sm ring-1 ring-white/70 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110"
+                className="flex h-7 w-7 items-center justify-center rounded-full bg-white/85 text-[13px] shadow-sm ring-1 ring-black/[0.03] transition-transform duration-200 group-hover:scale-105"
                 aria-hidden
               >
                 {tint?.icon ?? "🛒"}
               </span>
-              <span className="text-[13px] font-semibold leading-tight text-foreground/90">{category}</span>
-              <span className="text-[10px] text-foreground/50">
+              <span className="text-[13px] font-semibold leading-tight tracking-tight text-foreground/90">{category}</span>
+              <span className="text-[10px] font-medium text-foreground/45">
                 {products.length} מוצרים
               </span>
             </button>
