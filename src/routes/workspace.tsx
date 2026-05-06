@@ -43,6 +43,16 @@ function Workspace() {
   const [cartOpen, setCartOpen] = useState(false);
   const [bumpedId, setBumpedId] = useState<string | null>(null);
   const [finishedCount, setFinishedCount] = useState<number | null>(null);
+  const [collectedIds, setCollectedIds] = useState<Set<string>>(new Set());
+  const [showLeftoverModal, setShowLeftoverModal] = useState(false);
+
+  const toggleCollected = (id: string) =>
+    setCollectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   const [openCategory, setOpenCategory] = useState<string | null>(
     CATEGORY_ORDER[0] ?? null,
   );
