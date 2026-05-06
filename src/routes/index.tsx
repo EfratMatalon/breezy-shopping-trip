@@ -28,7 +28,7 @@ function Home() {
       </h2>
       <Link
         to="/workspace"
-        className="mt-6 inline-flex items-center justify-center rounded-2xl bg-primary px-14 py-7 text-2xl font-bold text-primary-foreground shadow-xl transition-transform hover:bg-primary/90 hover:scale-[1.02]"
+        className="mt-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-b from-primary to-[var(--primary-glow)] px-8 py-3 text-base font-semibold text-primary-foreground shadow-sm ring-1 ring-primary/20 transition-all duration-200 hover:shadow-md hover:brightness-105 active:scale-[0.98]"
       >
         רשימה חדשה
       </Link>
