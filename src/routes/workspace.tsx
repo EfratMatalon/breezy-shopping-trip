@@ -35,6 +35,7 @@ function Workspace() {
     addUserProduct,
     saveCurrentList,
     startNewCycle,
+    replaceSelectedItems,
     dismissSuggestion,
   } = useAppState();
 
