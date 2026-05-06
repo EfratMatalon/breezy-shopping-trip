@@ -306,7 +306,7 @@ function Workspace() {
             <div
               key={`${category}-panel`}
               style={{ animation: "expand 0.25s ease-out" }}
-              className="col-span-2 overflow-hidden rounded-2xl border border-white/60 bg-card shadow-[0_8px_24px_-12px_oklch(0.4_0.05_270/0.25)] sm:col-span-3"
+              className="col-span-2 overflow-hidden rounded-xl border border-black/[0.05] bg-card shadow-[0_2px_8px_-4px_oklch(0.3_0.03_265/0.12)] sm:col-span-3"
             >
               <div
                 style={{ background: tint?.grad ?? tint?.bg }}
