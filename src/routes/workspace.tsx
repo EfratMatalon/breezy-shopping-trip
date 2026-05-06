@@ -620,6 +620,59 @@ function Workspace() {
         )}
       </aside>
 
+      {showLeftoverModal && (
+        <div
+          className="fixed inset-0 z-[55] flex items-center justify-center bg-black/40 backdrop-blur-sm"
+          style={{ animation: "expand 0.2s ease-out" }}
+          onClick={() => setShowLeftoverModal(false)}
+        >
+          <div
+            className="mx-4 w-full max-w-sm rounded-2xl bg-card p-5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-base font-semibold text-foreground">
+              נשארו כמה מוצרים שלא סומנו
+            </h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              אפשר לשמור אותם לקנייה הבאה, או לחזור ולסמן עכשיו.
+            </p>
+
+            <ul className="mt-3 max-h-48 overflow-y-auto rounded-xl border border-border/60 bg-background/60 p-2">
+              {uncollectedItems.map((it) => {
+                const p = productById.get(it.productId);
+                if (!p) return null;
+                return (
+                  <li
+                    key={it.productId}
+                    className="flex items-center justify-between px-2 py-1.5 text-sm"
+                  >
+                    <span className="font-medium">{p.name}</span>
+                    <span className="text-xs text-muted-foreground">×{it.quantity}</span>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <div className="mt-4 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={handleSaveLeftoversForNext}
+                className="w-full rounded-xl bg-gradient-to-br from-primary to-[var(--primary-glow)] px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:brightness-110 active:scale-[0.97]"
+              >
+                לא היה במלאי — שמור לקנייה הבאה
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowLeftoverModal(false)}
+                className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:bg-accent active:scale-[0.97]"
+              >
+                חוזר לרשימה
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {finishedCount !== null && (
         <div
           className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm"
