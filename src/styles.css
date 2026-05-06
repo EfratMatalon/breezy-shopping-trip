@@ -171,6 +171,10 @@
     background: var(--app-bg, var(--color-background));
     background-attachment: fixed;
     color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "ss01", "cv11";
+    letter-spacing: -0.005em;
   }
 }
 
