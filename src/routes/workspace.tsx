@@ -159,11 +159,44 @@ function Workspace() {
 
   const totalCount = state.selectedItems.reduce((sum, i) => sum + i.quantity, 0);
 
+  const uncollectedItems = state.selectedItems.filter(
+    (i) => !collectedIds.has(i.productId),
+  );
+
+  const completeFinish = (count: number) => {
+    saveCurrentList();
+    startNewCycle();
+    setCollectedIds(new Set());
+    setCartOpen(false);
+    setOpenCategory(CATEGORY_ORDER[0] ?? null);
+    setQuery("");
+    setFinishedCount(count);
+    setTimeout(() => {
+      setFinishedCount(null);
+      navigate({ to: "/" });
+    }, 1600);
+  };
+
   const finishList = () => {
     if (state.selectedItems.length === 0) return;
+    if (uncollectedItems.length > 0) {
+      setShowLeftoverModal(true);
+      return;
+    }
+    const count = state.selectedItems.reduce((s, i) => s + i.quantity, 0);
+    completeFinish(count);
+  };
+
+  const handleSaveLeftoversForNext = () => {
+    // Save current full list to history, then start a new cycle pre-filled
+    // with the items that were not collected (out of stock / missed).
+    const leftovers = uncollectedItems.map((i) => ({ ...i }));
     const count = state.selectedItems.reduce((s, i) => s + i.quantity, 0);
     saveCurrentList();
     startNewCycle();
+    replaceSelectedItems(leftovers);
+    setCollectedIds(new Set());
+    setShowLeftoverModal(false);
     setCartOpen(false);
     setOpenCategory(CATEGORY_ORDER[0] ?? null);
     setQuery("");
