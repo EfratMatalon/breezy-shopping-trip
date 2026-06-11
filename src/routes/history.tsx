@@ -1,8 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useAppState } from "../lib/store";
+import { requireAuth } from "../lib/auth/requireAuth";
 
 export const Route = createFileRoute("/history")({
+  beforeLoad: requireAuth,
   head: () => ({
     meta: [
       { title: "היסטוריה — רשימת קניות" },

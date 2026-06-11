@@ -1,6 +1,9 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { Nav } from "../components/Nav";
 import { AppStateProvider } from "../lib/store";
+import { AuthProvider } from "../lib/auth/AuthProvider";
+import { getQueryClient } from "../lib/queryClient";
 
 import appCss from "../styles.css?url";
 
@@ -57,13 +60,17 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   return (
-    <AppStateProvider>
-      <div className="min-h-screen bg-background text-foreground">
-        <Nav />
-        <main className="mx-auto max-w-5xl px-6 py-10">
-          <Outlet />
-        </main>
-      </div>
-    </AppStateProvider>
+    <QueryClientProvider client={getQueryClient()}>
+      <AuthProvider>
+        <AppStateProvider>
+          <div className="min-h-screen bg-background text-foreground">
+            <Nav />
+            <main className="mx-auto max-w-5xl px-6 py-10">
+              <Outlet />
+            </main>
+          </div>
+        </AppStateProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }

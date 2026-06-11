@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router";
+import { useAuth } from "../lib/auth/AuthProvider";
 
 export function Nav() {
   const linkClass =
     "text-sm font-medium text-muted-foreground transition-colors hover:text-foreground";
   const activeProps = { className: "text-sm font-medium text-foreground" };
+  const { user, isConfigured, signOut } = useAuth();
 
   return (
     <header className="border-b border-border bg-background/80 backdrop-blur sticky top-0 z-10">
@@ -15,6 +17,21 @@ export function Nav() {
           <Link to="/history" className={linkClass} activeProps={activeProps}>
             היסטוריה
           </Link>
+          {isConfigured ? (
+            user ? (
+              <button
+                type="button"
+                onClick={() => void signOut()}
+                className={linkClass}
+              >
+                התנתקות
+              </button>
+            ) : (
+              <Link to="/login" className={linkClass} activeProps={activeProps}>
+                התחברות
+              </Link>
+            )
+          ) : null}
         </div>
       </nav>
     </header>

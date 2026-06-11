@@ -2,8 +2,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Minus, X, Search, ShoppingCart, Sparkles } from "lucide-react";
 import { useAppState, CATEGORY_ORDER, type Product } from "../lib/store";
+import { requireAuth } from "../lib/auth/requireAuth";
 
 export const Route = createFileRoute("/workspace")({
+  beforeLoad: requireAuth,
   head: () => ({
     meta: [
       { title: "רשימת קניות" },

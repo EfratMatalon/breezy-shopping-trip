@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAppState } from "@/lib/store";
 import { ShoppingBasket } from "lucide-react";
+import { requireAuth } from "../lib/auth/requireAuth";
 
 export const Route = createFileRoute("/")({
+  beforeLoad: requireAuth,
   head: () => ({
     meta: [
       { title: "רשימת קניות" },
