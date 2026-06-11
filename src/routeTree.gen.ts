@@ -10,9 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WorkspaceRouteImport } from './routes/workspace'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as JoinRouteImport } from './routes/join'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SettingsHouseholdRouteImport } from './routes/settings.household'
+import { Route as JoinCodeRouteImport } from './routes/join.$code'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 
 const WorkspaceRoute = WorkspaceRouteImport.update({
@@ -20,9 +24,19 @@ const WorkspaceRoute = WorkspaceRouteImport.update({
   path: '/workspace',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JoinRoute = JoinRouteImport.update({
+  id: '/join',
+  path: '/join',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HistoryRoute = HistoryRouteImport.update({
@@ -35,6 +49,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsHouseholdRoute = SettingsHouseholdRouteImport.update({
+  id: '/settings/household',
+  path: '/settings/household',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JoinCodeRoute = JoinCodeRouteImport.update({
+  id: '/join/$code',
+  path: '/join/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
@@ -44,45 +68,83 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
   '/workspace': typeof WorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/join/$code': typeof JoinCodeRoute
+  '/settings/household': typeof SettingsHouseholdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
   '/workspace': typeof WorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/join/$code': typeof JoinCodeRoute
+  '/settings/household': typeof SettingsHouseholdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
   '/workspace': typeof WorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/join/$code': typeof JoinCodeRoute
+  '/settings/household': typeof SettingsHouseholdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/history' | '/login' | '/workspace' | '/auth/callback'
+  fullPaths:
+    | '/'
+    | '/history'
+    | '/join'
+    | '/login'
+    | '/onboarding'
+    | '/workspace'
+    | '/auth/callback'
+    | '/join/$code'
+    | '/settings/household'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/history' | '/login' | '/workspace' | '/auth/callback'
+  to:
+    | '/'
+    | '/history'
+    | '/join'
+    | '/login'
+    | '/onboarding'
+    | '/workspace'
+    | '/auth/callback'
+    | '/join/$code'
+    | '/settings/household'
   id:
     | '__root__'
     | '/'
     | '/history'
+    | '/join'
     | '/login'
+    | '/onboarding'
     | '/workspace'
     | '/auth/callback'
+    | '/join/$code'
+    | '/settings/household'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HistoryRoute: typeof HistoryRoute
+  JoinRoute: typeof JoinRoute
   LoginRoute: typeof LoginRoute
+  OnboardingRoute: typeof OnboardingRoute
   WorkspaceRoute: typeof WorkspaceRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  JoinCodeRoute: typeof JoinCodeRoute
+  SettingsHouseholdRoute: typeof SettingsHouseholdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -94,11 +156,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkspaceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/join': {
+      id: '/join'
+      path: '/join'
+      fullPath: '/join'
+      preLoaderRoute: typeof JoinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/history': {
@@ -115,6 +191,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/household': {
+      id: '/settings/household'
+      path: '/settings/household'
+      fullPath: '/settings/household'
+      preLoaderRoute: typeof SettingsHouseholdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/join/$code': {
+      id: '/join/$code'
+      path: '/join/$code'
+      fullPath: '/join/$code'
+      preLoaderRoute: typeof JoinCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -128,9 +218,13 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HistoryRoute: HistoryRoute,
+  JoinRoute: JoinRoute,
   LoginRoute: LoginRoute,
+  OnboardingRoute: OnboardingRoute,
   WorkspaceRoute: WorkspaceRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  JoinCodeRoute: JoinCodeRoute,
+  SettingsHouseholdRoute: SettingsHouseholdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

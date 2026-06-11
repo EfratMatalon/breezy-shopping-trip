@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase, isSupabaseConfigured } from "../lib/supabase/client";
+import { getPendingInvite, clearPendingInvite } from "../lib/household/pendingInvite";
 
 export const Route = createFileRoute("/auth/callback")({
   head: () => ({
@@ -27,6 +28,16 @@ function AuthCallback() {
 
     let cancelled = false;
 
+    const proceed = () => {
+      const pendingCode = getPendingInvite();
+      if (pendingCode) {
+        clearPendingInvite();
+        navigate({ to: "/join/$code", params: { code: pendingCode } });
+        return;
+      }
+      navigate({ to: "/" });
+    };
+
     const finish = async () => {
       const { data, error: sessionError } = await supabase.auth.getSession();
       if (cancelled) return;
@@ -35,7 +46,7 @@ function AuthCallback() {
         return;
       }
       if (data.session) {
-        navigate({ to: "/" });
+        proceed();
         return;
       }
       // Not ready yet — wait for onAuthStateChange to fire.
@@ -43,7 +54,7 @@ function AuthCallback() {
         data: { subscription },
       } = supabase.auth.onAuthStateChange((_event, session) => {
         if (session) {
-          navigate({ to: "/" });
+          proceed();
         }
       });
       return () => subscription.unsubscribe();
