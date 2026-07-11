@@ -1,46 +1,69 @@
-// Follow this setup guide to integrate the Deno language server with your editor:
-// https://deno.land/manual/getting_started/setup_your_environment
-// This enables autocomplete, go to definition, etc.
-
-// Setup type definitions for built-in Supabase Runtime APIs
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { withSupabase } from "@supabase/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "../_shared/database.ts";
+import { handleChatMessage } from "./service.ts";
+import { AIError, normalizeAIError, type AIErrorType } from "./errors.ts";
+import type { AIMessage, ConversationState } from "./types.ts";
 
-console.log("Hello from Functions!");
+interface ChatRequestBody {
+  message: string;
+  conversationHistory?: AIMessage[];
+  conversationState?: ConversationState;
+}
 
-// This endpoint uses 'publishable' | 'secret' access, apiKey is required.
-// Use publishable for Client-facing, key-validated endpoints
-// Use secret for Server-to-server, internal calls
-export default {
-  fetch: withSupabase({ auth: ["publishable", "secret"] }, async (req, ctx) => {
-    // Called by another service with a secret key
-    // ctx.supabaseAdmin bypasses RLS — use for privileged operations
-    /*
-    if (ctx.authMode === "secret") {
-      const { user_id } = await req.json();
-      const { data } = await ctx.supabaseAdmin.auth.admin.getUserById(user_id);
-
-      return Response.json({
-        email: data?.user?.email,
-      });
-    }
-    */
-
-    const { name } = await req.json();
-
-    return Response.json({
-      message: `Hello ${name}!`,
-    });
-  }),
+const ERROR_STATUS: Record<AIErrorType, number> = {
+  TimeoutError: 504,
+  RateLimitError: 429,
+  NetworkError: 502,
+  ProviderError: 502,
+  InvalidResponseError: 502,
 };
 
-/* To invoke locally:
+export default {
+  fetch: withSupabase({ auth: "user", cors: true }, async (req, ctx) => {
+    let body: ChatRequestBody;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json(
+        { error: "INVALID_REQUEST", message: "Request body must be valid JSON" },
+        { status: 400 },
+      );
+    }
 
-  1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
-  2. Make an HTTP request:
+    if (!body?.message || typeof body.message !== "string") {
+      return Response.json(
+        { error: "INVALID_REQUEST", message: '"message" is required' },
+        { status: 400 },
+      );
+    }
 
-  curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/ai-chat' \
-    --header 'apiKey: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH' \
-    --data '{"name":"Functions"}'
+    const claims = ctx.userClaims as { id?: string; sub?: string } | null;
+    const userId = claims?.id ?? claims?.sub;
+    if (!userId) {
+      return Response.json({ error: "UNAUTHORIZED", message: "Sign-in required" }, { status: 401 });
+    }
 
-*/
+    try {
+      const result = await handleChatMessage({
+        supabase: ctx.supabase as unknown as SupabaseClient<Database>,
+        userId,
+        message: body.message,
+        conversationHistory: body.conversationHistory,
+        conversationState: body.conversationState,
+      });
+
+      return Response.json(result);
+    } catch (error) {
+      const normalized = error instanceof AIError ? error : normalizeAIError(error);
+      console.error(
+        JSON.stringify({ event: "ai_error", type: normalized.type, message: normalized.message }),
+      );
+      return Response.json(
+        { error: normalized.type, message: normalized.message },
+        { status: ERROR_STATUS[normalized.type] ?? 500 },
+      );
+    }
+  }),
+};
