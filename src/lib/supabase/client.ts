@@ -26,3 +26,7 @@ export const supabase = createClient<Database>(
     },
   },
 );
+
+export const sessionReady: Promise<void> = isSupabaseConfigured
+  ? supabase.auth.getSession().then(() => {})
+  : Promise.resolve();

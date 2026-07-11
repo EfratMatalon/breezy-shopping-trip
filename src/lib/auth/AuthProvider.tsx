@@ -9,12 +9,18 @@ import {
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase, isSupabaseConfigured } from "../supabase/client";
 
+export type SignUpResult = {
+  /** True when Supabase requires email confirmation before the session is active. */
+  needsConfirmation: boolean;
+};
+
 export type AuthState = {
   session: Session | null;
   user: User | null;
   loading: boolean;
   isConfigured: boolean;
-  signInWithGoogle: () => Promise<void>;
+  signUp: (email: string, password: string) => Promise<SignUpResult>;
+  signInWithPassword: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -50,16 +56,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user: session?.user ?? null,
       loading,
       isConfigured: isSupabaseConfigured,
-      signInWithGoogle: async () => {
+      signUp: async (email, password) => {
         if (!isSupabaseConfigured) {
           throw new Error("Supabase is not configured (missing VITE_SUPABASE_* env vars)");
         }
-        await supabase.auth.signInWithOAuth({
-          provider: "google",
-          options: {
-            redirectTo: `${window.location.origin}/auth/callback`,
-          },
-        });
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        return { needsConfirmation: !data.session };
+      },
+      signInWithPassword: async (email, password) => {
+        if (!isSupabaseConfigured) {
+          throw new Error("Supabase is not configured (missing VITE_SUPABASE_* env vars)");
+        }
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
       },
       signOut: async () => {
         if (!isSupabaseConfigured) return;

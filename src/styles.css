@@ -70,11 +70,12 @@
   --card-foreground: oklch(0.28 0.006 230);
   --popover: oklch(0.985 0.005 85);
   --popover-foreground: oklch(0.28 0.006 230);
-  --primary: oklch(0.625 0.052 145);
-  --primary-foreground: oklch(0.985 0.005 85);
-  --primary-glow: oklch(0.685 0.055 145);
-  --primary-soft: oklch(0.93 0.025 145);
+  --primary: oklch(0.470 0.177 294);
+  --primary-foreground: oklch(1 0 0);
+  --primary-glow: oklch(0.570 0.165 294);
+  --primary-soft: oklch(0.950 0.040 296);
   --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-glow));
+  --accent: oklch(0.950 0.040 296);
   --shadow-soft: 0 2px 8px -4px oklch(0.30 0.006 230 / 0.10);
   --shadow-card: 0 1px 3px -1px oklch(0.30 0.006 230 / 0.07), 0 1px 2px -1px oklch(0.30 0.006 230 / 0.05);
 
@@ -171,6 +172,7 @@
     background: var(--app-bg, var(--color-background));
     background-attachment: fixed;
     color: var(--color-foreground);
+    font-family: 'Heebo', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "ss01", "cv11";

@@ -1,6 +1,7 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Nav } from "../components/Nav";
+import { HebrewErrorBoundary } from "../components/HebrewErrorBoundary";
 import { AppStateProvider } from "../lib/store";
 import { AuthProvider } from "../lib/auth/AuthProvider";
 import { HouseholdProvider } from "../lib/household/HouseholdProvider";
@@ -38,7 +39,12 @@ export const Route = createRootRoute({
       { title: "רשימת קניות — פשוט לעשות קניות" },
       { name: "description", content: "תכננו, סמנו ושמרו את רשימות הקניות שלכם." },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -61,19 +67,21 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   return (
-    <QueryClientProvider client={getQueryClient()}>
-      <AuthProvider>
-        <HouseholdProvider>
-          <AppStateProvider>
-            <div className="min-h-screen bg-background text-foreground">
-              <Nav />
-              <main className="mx-auto max-w-5xl px-6 py-10">
-                <Outlet />
-              </main>
-            </div>
-          </AppStateProvider>
-        </HouseholdProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <HebrewErrorBoundary>
+      <QueryClientProvider client={getQueryClient()}>
+        <AuthProvider>
+          <HouseholdProvider>
+            <AppStateProvider>
+              <div className="min-h-screen bg-background text-foreground">
+                <Nav />
+                <main className="mx-auto max-w-6xl px-3 py-8">
+                  <Outlet />
+                </main>
+              </div>
+            </AppStateProvider>
+          </HouseholdProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </HebrewErrorBoundary>
   );
 }

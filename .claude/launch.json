@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "vite-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
+    },
+    {
+      "name": "supabase-local",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "supabase:start"],
+      "port": 54321
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import { redirect } from "@tanstack/react-router";
-import { supabase, isSupabaseConfigured } from "../supabase/client";
+import { supabase, isSupabaseConfigured, sessionReady } from "../supabase/client";
 import { getQueryClient } from "../queryClient";
 import { queryKeys } from "../queries/queryKeys";
 import { fetchMyHousehold } from "../queries/households";
@@ -16,6 +16,7 @@ import { fetchMyHousehold } from "../queries/households";
 export async function requireAuth() {
   if (!isSupabaseConfigured) return;
 
+  await sessionReady;
   const { data } = await supabase.auth.getSession();
   if (!data.session) {
     throw redirect({ to: "/login" });
@@ -30,6 +31,7 @@ export async function requireAuth() {
 export async function requireGuest() {
   if (!isSupabaseConfigured) return;
 
+  await sessionReady;
   const { data } = await supabase.auth.getSession();
   if (data.session) {
     throw redirect({ to: "/" });
@@ -50,6 +52,7 @@ export async function requireGuest() {
 export async function requireHousehold() {
   if (!isSupabaseConfigured) return;
 
+  await sessionReady;
   const { data } = await supabase.auth.getSession();
   if (!data.session) {
     throw redirect({ to: "/login" });
@@ -73,6 +76,7 @@ export async function requireHousehold() {
 export async function requireNoHousehold() {
   if (!isSupabaseConfigured) return;
 
+  await sessionReady;
   const { data } = await supabase.auth.getSession();
   if (!data.session) {
     throw redirect({ to: "/login" });

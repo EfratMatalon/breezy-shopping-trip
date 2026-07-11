@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useAppState } from "@/lib/store";
+import { useQuery } from "@tanstack/react-query";
 import { ShoppingBasket } from "lucide-react";
 import { requireAuth, requireHousehold } from "../lib/auth/requireAuth";
+import { useMyHousehold } from "../lib/household/useMyHousehold";
+import { queryKeys } from "../lib/queries/queryKeys";
+import { fetchActiveList, fetchListItems } from "../lib/queries/lists";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async () => {
@@ -18,13 +21,28 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { state, getProduct } = useAppState();
-  const hasActive = state.selectedItems.length > 0;
-  const previewNames = state.selectedItems
-    .slice(0, 3)
-    .map((i) => getProduct(i.productId)?.name)
-    .filter(Boolean) as string[];
-  const totalQty = state.selectedItems.reduce((sum, i) => sum + i.quantity, 0);
+  const { household } = useMyHousehold();
+  const householdId = household?.id;
+
+  const activeListQuery = useQuery({
+    queryKey: queryKeys.activeList(householdId),
+    queryFn: () => fetchActiveList(householdId!),
+    enabled: !!householdId,
+  });
+
+  const listId = activeListQuery.data?.id;
+
+  const itemsQuery = useQuery({
+    queryKey: queryKeys.listItems(listId),
+    queryFn: () => fetchListItems(listId!),
+    enabled: !!listId,
+  });
+
+  const isLoading = activeListQuery.isLoading || (!!listId && itemsQuery.isLoading);
+  const items = itemsQuery.data ?? [];
+  const hasActive = items.length > 0;
+  const previewNames = items.slice(0, 3).map((i) => i.product?.name).filter(Boolean) as string[];
+  const totalQty = items.reduce((sum, i) => sum + i.quantity, 0);
 
   return (
     <section className="flex min-h-[60vh] flex-col items-center justify-center text-center" dir="rtl">
@@ -44,7 +62,25 @@ function Home() {
         רשימות קודמות
       </Link>
 
-      {hasActive && (
+      {isLoading && (
+        <div className="mt-8 w-full max-w-md rounded-2xl border border-border/60 bg-card/60 p-5 text-center text-sm text-muted-foreground shadow-sm">
+          טוען רשימה פעילה…
+        </div>
+      )}
+
+      {!isLoading && !activeListQuery.data && (
+        <div className="mt-8 w-full max-w-md rounded-2xl border border-dashed border-border/60 bg-card/60 p-5 text-center text-sm text-muted-foreground shadow-sm">
+          לא נמצאה רשימת קניות פעילה.
+        </div>
+      )}
+
+      {!isLoading && activeListQuery.data && !hasActive && (
+        <div className="mt-8 w-full max-w-md rounded-2xl border border-dashed border-border/60 bg-card/60 p-5 text-center text-sm text-muted-foreground shadow-sm">
+          הרשימה הפעילה ריקה — לחצו על "רשימה חדשה" כדי להוסיף מוצרים.
+        </div>
+      )}
+
+      {!isLoading && hasActive && (
         <Link
           to="/workspace"
           className="mt-8 w-full max-w-md rounded-2xl border border-border/60 bg-card/80 p-5 text-right shadow-md backdrop-blur transition-all hover:shadow-lg hover:scale-[1.01]"
@@ -73,9 +109,9 @@ function Home() {
                   {name}
                 </span>
               ))}
-              {state.selectedItems.length > previewNames.length && (
+              {items.length > previewNames.length && (
                 <span className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
-                  +{state.selectedItems.length - previewNames.length} נוספים
+                  +{items.length - previewNames.length} נוספים
                 </span>
               )}
             </div>

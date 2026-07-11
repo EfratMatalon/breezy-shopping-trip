@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { LogOut, Settings, Clock } from "lucide-react";
 import { useAuth } from "../lib/auth/AuthProvider";
 import { useMyHousehold } from "../lib/household/useMyHousehold";
 
@@ -21,11 +22,13 @@ export function Nav() {
           )}
         </Link>
         <div className="flex items-center gap-6">
-          <Link to="/history" className={linkClass} activeProps={activeProps}>
+          <Link to="/history" className={`${linkClass} flex items-center gap-1.5`} activeProps={activeProps}>
+            <Clock className="h-4 w-4" />
             היסטוריה
           </Link>
           {household && (
-            <Link to="/settings/household" className={linkClass} activeProps={activeProps}>
+            <Link to="/settings/household" className={`${linkClass} flex items-center gap-1.5`} activeProps={activeProps}>
+              <Settings className="h-4 w-4" />
               הגדרות בית
             </Link>
           )}
@@ -34,8 +37,9 @@ export function Nav() {
               <button
                 type="button"
                 onClick={() => void signOut()}
-                className={linkClass}
+                className={`${linkClass} flex items-center gap-1.5`}
               >
+                <LogOut className="h-4 w-4" />
                 התנתקות
               </button>
             ) : (

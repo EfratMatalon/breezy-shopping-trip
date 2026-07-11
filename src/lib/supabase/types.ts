@@ -16,6 +16,23 @@ export type ShoppingListStatus = "active" | "completed";
 export type Database = {
   public: {
     Tables: {
+      categories: {
+        Row: {
+          slug: string;
+          display_name_he: string;
+          image: string | null;
+          active: boolean;
+          sort_order: number;
+        };
+        Insert: {
+          slug: string;
+          display_name_he: string;
+          image?: string | null;
+          active?: boolean;
+          sort_order?: number;
+        };
+        Update: Partial<Database["public"]["Tables"]["categories"]["Insert"]>;
+      };
       profiles: {
         Row: {
           id: string;
@@ -74,8 +91,12 @@ export type Database = {
           id: string;
           household_id: string | null;
           name: string;
-          category: string;
           normalized_name: string;
+          category_id: string | null;       // FK → categories.slug
+          slug: string | null;
+          image: string | null;
+          active: boolean;
+          sort_order: number;
           created_by: string | null;
           created_at: string;
         };
@@ -83,8 +104,12 @@ export type Database = {
           id?: string;
           household_id?: string | null;
           name: string;
-          category: string;
           normalized_name: string;
+          category_id?: string | null;
+          slug?: string | null;
+          image?: string | null;
+          active?: boolean;
+          sort_order?: number;
           created_by?: string | null;
           created_at?: string;
         };
@@ -137,6 +162,29 @@ export type Database = {
           updated_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["shopping_items"]["Insert"]>;
+      };
+      shopping_notes: {
+        Row: {
+          id: string;
+          shopping_list_id: string;
+          created_by: string | null;
+          title: string | null;
+          note: string;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          shopping_list_id: string;
+          created_by?: string | null;
+          title?: string | null;
+          note: string;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["shopping_notes"]["Insert"]>;
       };
       recurring_products: {
         Row: {
@@ -194,8 +242,13 @@ export type Database = {
         Returns: undefined;
       };
       complete_shopping_trip: {
-        Args: { p_household_id: string };
-        Returns: string;
+        Args: {
+          p_household_id: string;
+          p_active_list_id: string;
+          p_carry_pending: boolean;
+          p_carry_unavailable: boolean;
+        };
+        Returns: { new_list_id: string; archived_list_id: string };
       };
     };
     Enums: Record<string, never>;

@@ -13,7 +13,7 @@ export const Route = createFileRoute("/join/$code")({
 
     const { data } = await supabase.auth.getSession();
     if (!data.session) {
-      // Remember the invite so /auth/callback can resume here after login.
+      // Remember the invite so the login page can resume here after sign-in.
       setPendingInvite(params.code);
       throw redirect({ to: "/login" });
     }
