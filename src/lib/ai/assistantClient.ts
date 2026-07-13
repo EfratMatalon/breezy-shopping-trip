@@ -20,6 +20,35 @@ export class AssistantClientError extends Error {
   }
 }
 
+function toHebrewError(err: unknown): string {
+  const name = err instanceof Error ? err.name : "";
+  const msg = err instanceof Error ? err.message.toLowerCase() : "";
+
+  if (name === "AbortError" || msg.includes("timeout") || msg.includes("abort")) {
+    return "הבקשה ארכה יותר מדי זמן. בדוק את החיבור לאינטרנט ונסה שוב.";
+  }
+
+  const status =
+    err != null && typeof err === "object" && "status" in err
+      ? (err as { status: number }).status
+      : undefined;
+
+  switch (status) {
+    case 401:
+      return "נדרשת התחברות מחדש. נסה להתנתק ולהתחבר שוב.";
+    case 403:
+      return "אין לך הרשאה לבצע פעולה זו.";
+    case 404:
+      return "השירות אינו זמין כרגע. נסה שוב מאוחר יותר.";
+    case 429:
+      return "יותר מדי בקשות. אנא המתן מעט ונסה שוב.";
+    case 500:
+      return "שגיאה בשרת. נסה שוב בעוד מספר דקות.";
+    default:
+      return "שגיאה בתקשורת עם השירות. נסה שוב.";
+  }
+}
+
 export interface SendMessageParams {
   message: string;
   /** Round-tripped by the caller — Phase 6.0 does not persist conversation state server-side. */
@@ -48,10 +77,10 @@ export async function sendMessage(params: SendMessageParams): Promise<AIResponse
   });
 
   if (error) {
-    throw new AssistantClientError(error.message);
+    throw new AssistantClientError(toHebrewError(error));
   }
   if (!data) {
-    throw new AssistantClientError("Empty response from assistant");
+    throw new AssistantClientError("שגיאה בתקשורת עם השירות. נסה שוב.");
   }
 
   return data;

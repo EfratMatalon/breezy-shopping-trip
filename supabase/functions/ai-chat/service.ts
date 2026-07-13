@@ -5,7 +5,8 @@ import { loadPrompt } from "./promptLoader.ts";
 import { geminiProvider } from "./provider.ts";
 import { classifyResponse } from "./actionPlanner.ts";
 import { AIError, normalizeAIError } from "./errors.ts";
-import type { AIMessage, AIResponse, ConversationState, RawModelOutput } from "./types.ts";
+import { validateModelOutput } from "./schemas/responseSchema.ts";
+import type { AIMessage, AIResponse, ConversationState } from "./types.ts";
 
 export interface HandleChatMessageParams {
   supabase: SupabaseClient<Database>;
@@ -28,7 +29,7 @@ export async function handleChatMessage(params: HandleChatMessageParams): Promis
     conversationState: params.conversationState,
   });
 
-  const systemPrompt = await loadPrompt("shopping-pal");
+  const systemPrompt = loadPrompt("shopping-pal");
 
   let modelText: string;
   let usage: AIResponse["usage"];
@@ -47,17 +48,14 @@ export async function handleChatMessage(params: HandleChatMessageParams): Promis
 
   console.log(JSON.stringify({ event: "ai_token_usage", ...usage }));
 
-  let raw: RawModelOutput;
+  let parsed: unknown;
   try {
-    raw = JSON.parse(modelText) as RawModelOutput;
+    parsed = JSON.parse(modelText);
   } catch (cause) {
     throw new AIError("InvalidResponseError", "Gemini did not return valid JSON", { cause });
   }
 
-  if (typeof raw.reply !== "string") {
-    throw new AIError("InvalidResponseError", 'Gemini response is missing "reply"');
-  }
-
+  const raw = validateModelOutput(parsed);
   const action = classifyResponse(raw);
 
   return {

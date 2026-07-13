@@ -15,6 +15,8 @@ import { useShoppingItemsChannel } from "../lib/realtime/useShoppingItemsChannel
 import { useShoppingNotesChannel } from "../lib/realtime/useShoppingNotesChannel";
 import { getCategoryImagePath, getProductImagePath } from "../lib/imageHelpers";
 import { fetchCategories } from "../lib/queries/categories";
+import { AssistantPanel, AssistantFab } from "../components/AssistantPanel";
+import { AI_ENABLED } from "../lib/ai/config";
 
 export const Route = createFileRoute("/workspace")({
   beforeLoad: async () => {
@@ -93,6 +95,7 @@ function Workspace() {
   const [carryPendingChoice, setCarryPendingChoice] = useState(false);
   const [tripError, setTripError]                 = useState<string | null>(null);
   const [successToastMsg, setSuccessToastMsg]     = useState<string | null>(null);
+  const [assistantOpen, setAssistantOpen]           = useState(false);
 
   // ── Per-product quantity (category panel "planning" stage) ───────────────
   const [productQtys, setProductQtys] = useState<Record<string, number>>({});
@@ -825,6 +828,9 @@ function Workspace() {
           </div>
         </div>
       )}
+
+      {AI_ENABLED && <AssistantFab onClick={() => setAssistantOpen(true)} />}
+      {AI_ENABLED && <AssistantPanel open={assistantOpen} onOpenChange={setAssistantOpen} />}
     </section>
   );
 }

@@ -1,22 +1,10 @@
 import { getGeminiConfig } from "./config.ts";
 import { AIError } from "./errors.ts";
 import type { AIProvider, GenerateParams, GenerateResult } from "./types.ts";
+import { RESPONSE_SCHEMA } from "./schemas/responseSchema.ts";
 
 const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 const REQUEST_TIMEOUT_MS = 20_000;
-
-const RESPONSE_SCHEMA = {
-  type: "OBJECT",
-  properties: {
-    reply: { type: "STRING" },
-    intent: {
-      type: "STRING",
-      enum: ["Question", "AddProduct", "UpdateQuantity", "RemoveProduct", "Recipe", "Suggestion"],
-    },
-    payload: { type: "OBJECT" },
-  },
-  required: ["reply", "intent"],
-} as const;
 
 async function generate(params: GenerateParams): Promise<GenerateResult> {
   const config = getGeminiConfig();
