@@ -16,7 +16,6 @@
     "supabase:test": "supabase db reset && psql \"$DATABASE_URL\" -f supabase/tests/rls_policies.test.sql"
   },
   "dependencies": {
-    "@cloudflare/vite-plugin": "^1.25.5",
     "@supabase/supabase-js": "^2.45.4",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -73,7 +72,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
-    "@lovable.dev/vite-tanstack-config": "^1.4.0",
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
