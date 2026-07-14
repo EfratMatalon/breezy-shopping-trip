@@ -1,23 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { ShoppingBasket } from "lucide-react";
-import { requireAuth, requireHousehold } from "../lib/auth/requireAuth";
-import { useMyHousehold } from "../lib/household/useMyHousehold";
-import { queryKeys } from "../lib/queries/queryKeys";
-import { fetchActiveList, fetchListItems } from "../lib/queries/lists";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  beforeLoad: async () => {
-    await requireAuth();
-    await requireHousehold();
+  beforeLoad: () => {
+    throw redirect({ to: "/login" });
   },
-  head: () => ({
-    meta: [
-      { title: "רשימת קניות" },
-      { name: "description", content: "פתיחת רשימת קניות חדשה." },
-    ],
-  }),
-  component: Home,
 });
 
 function Home() {
