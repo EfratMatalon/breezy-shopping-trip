@@ -4,6 +4,7 @@ import { useMemo, useState, useCallback, useRef } from "react";
 import { ShoppingCart, Search, X } from "lucide-react";
 import { requireAuth, requireHousehold } from "../lib/auth/requireAuth";
 import { useMyHousehold } from "../lib/household/useMyHousehold";
+import { useAuth } from "../lib/auth/AuthProvider";
 import { queryKeys } from "../lib/queries/queryKeys";
 import { fetchActiveList, fetchListItems, type ShoppingItemWithProduct } from "../lib/queries/lists";
 import { fetchProducts, type Product } from "../lib/queries/products";
@@ -17,6 +18,16 @@ import { getCategoryImagePath, getProductImagePath } from "../lib/imageHelpers";
 import { fetchCategories } from "../lib/queries/categories";
 import { AssistantPanel, AssistantFab } from "../components/AssistantPanel";
 import { AI_ENABLED } from "../lib/ai/config";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "../components/ui/alert-dialog";
 
 export const Route = createFileRoute("/workspace")({
   beforeLoad: async () => {
@@ -43,6 +54,7 @@ function normalizeHebrew(s: string): string {
 
 function Workspace() {
   const { household } = useMyHousehold();
+  const { user } = useAuth();
   const householdId = household?.id;
 
   const activeListQuery = useQuery({
@@ -84,6 +96,38 @@ function Workspace() {
   useShoppingNotesChannel(listId);
 
   const completeTrip = useCompleteTrip(householdId);
+
+  // ── Recovery dialog state ─────────────────────────────────────────────────
+  const [recoveryDismissed, setRecoveryDismissed] = useState(false);
+  const [showNewListConfirm, setShowNewListConfirm] = useState(false);
+
+  const firstName = user?.user_metadata?.full_name as string | undefined;
+  const recoveryItemCount = itemsQuery.data?.length ?? 0;
+  const showRecoveryDialog = !recoveryDismissed && !itemsQuery.isLoading && !!listId && recoveryItemCount > 0;
+
+  const handleContinueList = useCallback(() => {
+    setRecoveryDismissed(true);
+  }, []);
+
+  const handleNewListRequest = useCallback(() => {
+    setShowNewListConfirm(true);
+  }, []);
+
+  const handleConfirmNewList = useCallback(() => {
+    if (!listId || !householdId) return;
+    setShowNewListConfirm(false);
+    setRecoveryDismissed(true);
+    completeTrip.mutate(
+      { activeListId: listId, carryPending: false, carryUnavailable: false },
+      {
+        onSuccess: () => {
+          setSuccessToastMsg("רשימה חדשה נוצרה בהצלחה!");
+          setCompleteTripToast(true);
+          setTimeout(() => { setCompleteTripToast(false); setSuccessToastMsg(null); }, 4000);
+        },
+      },
+    );
+  }, [listId, householdId, completeTrip]);
 
   // ── UI state ──────────────────────────────────────────────────────────────
   const [openCategory, setOpenCategory]           = useState<string | null>(null);
@@ -290,6 +334,65 @@ function Workspace() {
   }
 
   return (
+    <>
+    {/* ── Recovery dialog ─────────────────────────────────────────────────── */}
+    <AlertDialog open={showRecoveryDialog} onOpenChange={(open) => { if (!open) setRecoveryDismissed(true); }}>
+      <AlertDialogContent dir="rtl" className="max-w-sm text-center">
+        <AlertDialogHeader className="items-center">
+          <AlertDialogTitle className="text-xl">
+            {firstName ? `שלום ${firstName} 👋` : "שלום 👋"}
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-base">
+            יש לך רשימת קניות פתוחה עם {recoveryItemCount} מוצרים.
+            <br />
+            מה תרצה לעשות?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter className="flex-col gap-2 sm:flex-col sm:space-x-0">
+          <AlertDialogAction
+            onClick={handleContinueList}
+            className="w-full rounded-[14px] shadow-[0_4px_16px_rgba(181,101,47,.28)] hover:brightness-110"
+            style={{ background: "#B5652F", color: "#fff", borderColor: "#B5652F" }}
+          >
+            המשך לרשימה
+          </AlertDialogAction>
+          <AlertDialogCancel
+            onClick={handleNewListRequest}
+            className="w-full rounded-[14px] hover:bg-[#B5652F]/5"
+            style={{ background: "#fff", color: "#B5652F", border: "1.5px solid #B5652F" }}
+          >
+            צור רשימה חדשה
+          </AlertDialogCancel>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+
+    {/* ── New list confirmation dialog ────────────────────────────────────── */}
+    <AlertDialog open={showNewListConfirm} onOpenChange={setShowNewListConfirm}>
+      <AlertDialogContent dir="rtl" className="max-w-sm">
+        <AlertDialogHeader className="items-center text-center">
+          <AlertDialogTitle>יצירת רשימה חדשה</AlertDialogTitle>
+          <AlertDialogDescription className="text-center">
+            פעולה זו תמחק את כל הפריטים ברשימת הקניות הנוכחית.
+            <br />
+            האם ברצונך להמשיך?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter className="flex-row-reverse gap-2 sm:flex-row-reverse sm:space-x-0">
+          <AlertDialogAction
+            onClick={handleConfirmNewList}
+            className="rounded-[14px] shadow-[0_4px_16px_rgba(181,101,47,.28)] hover:brightness-110"
+            style={{ background: "#B5652F", color: "#fff", borderColor: "#B5652F" }}
+          >
+            כן, צור רשימה חדשה
+          </AlertDialogAction>
+          <AlertDialogCancel className="rounded-[14px]">
+            ביטול
+          </AlertDialogCancel>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+
     <section className="flex flex-col gap-6 pb-10 lg:grid lg:grid-cols-[minmax(300px,_1.25fr)_3fr] lg:items-start">
 
       {/* ══ RIGHT (desktop) / TOP (mobile): Shopping list ══ */}
@@ -832,5 +935,6 @@ function Workspace() {
       {AI_ENABLED && <AssistantFab onClick={() => setAssistantOpen(true)} />}
       {AI_ENABLED && <AssistantPanel open={assistantOpen} onOpenChange={setAssistantOpen} />}
     </section>
+    </>
   );
 }
