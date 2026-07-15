@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { LogOut, Settings, Clock } from "lucide-react";
 import { useAuth } from "../lib/auth/AuthProvider";
 import { useMyHousehold } from "../lib/household/useMyHousehold";
@@ -9,6 +9,7 @@ export function Nav() {
   const activeProps = { className: "text-sm font-medium text-foreground" };
   const { user, isConfigured, signOut } = useAuth();
   const { household } = useMyHousehold();
+  const navigate = useNavigate();
 
   return (
     <header className="border-b border-border bg-background/80 backdrop-blur sticky top-0 z-10">
@@ -36,7 +37,7 @@ export function Nav() {
             user ? (
               <button
                 type="button"
-                onClick={() => void signOut()}
+                onClick={async () => { await signOut(); navigate({ to: "/" }); }}
                 className={`${linkClass} flex items-center gap-1.5`}
               >
                 <LogOut className="h-4 w-4" />

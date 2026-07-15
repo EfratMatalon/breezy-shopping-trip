@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState, useCallback, useRef } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { ShoppingCart, Search, X } from "lucide-react";
 import { requireAuth, requireHousehold } from "../lib/auth/requireAuth";
 import { useMyHousehold } from "../lib/household/useMyHousehold";
@@ -100,10 +100,18 @@ function Workspace() {
   // ── Recovery dialog state ─────────────────────────────────────────────────
   const [recoveryDismissed, setRecoveryDismissed] = useState(false);
   const [showNewListConfirm, setShowNewListConfirm] = useState(false);
+  const [initialItemCount, setInitialItemCount] = useState<number | null>(null);
 
   const firstName = user?.user_metadata?.full_name as string | undefined;
-  const recoveryItemCount = itemsQuery.data?.length ?? 0;
-  const showRecoveryDialog = !recoveryDismissed && !itemsQuery.isLoading && !!listId && recoveryItemCount > 0;
+
+  useEffect(() => {
+    if (initialItemCount === null && !itemsQuery.isLoading && listId) {
+      setInitialItemCount(itemsQuery.data?.length ?? 0);
+    }
+  }, [initialItemCount, itemsQuery.isLoading, itemsQuery.data, listId]);
+
+  const showRecoveryDialog = !recoveryDismissed && initialItemCount !== null && initialItemCount > 0;
+  const recoveryItemCount = initialItemCount ?? 0;
 
   const handleContinueList = useCallback(() => {
     setRecoveryDismissed(true);
