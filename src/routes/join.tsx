@@ -79,7 +79,7 @@ function JoinByCodeForm() {
         <button
           type="submit"
           disabled={!code.trim() || loading}
-          className="mt-3 w-full rounded-xl bg-gradient-to-br from-primary to-[var(--primary-glow)] px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition-all hover:brightness-110 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-3 w-full rounded-[14px] bg-[#B5652F] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_4px_16px_rgba(181,101,47,.28)] transition-all hover:brightness-110 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "מצטרפים…" : "הצטרפו לבית"}
         </button>

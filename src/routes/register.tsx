@@ -16,7 +16,7 @@ export const Route = createFileRoute("/register")({
   component: Register,
 });
 
-const MIN_PASSWORD_LENGTH = 5;
+const MIN_PASSWORD_LENGTH = 6;
 
 function Register() {
   const { signUp, isConfigured } = useAuth();
@@ -198,7 +198,7 @@ function Register() {
         <button
           type="submit"
           disabled={!isConfigured || loading}
-          className="mt-2 inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-2 inline-flex items-center justify-center rounded-[14px] bg-[#B5652F] px-6 py-3 text-sm font-semibold text-white shadow-[0_4px_16px_rgba(181,101,47,.28)] transition-all hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "יוצר חשבון…" : "יצירת חשבון"}
         </button>

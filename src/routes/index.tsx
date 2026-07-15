@@ -1,88 +1,94 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useAppState } from "@/lib/store";
-import { ShoppingBasket } from "lucide-react";
-import { requireAuth } from "../lib/auth/requireAuth";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { isSupabaseConfigured, sessionReady, supabase } from "../lib/supabase/client";
+import { getQueryClient } from "../lib/queryClient";
+import { queryKeys } from "../lib/queries/queryKeys";
+import { fetchMyHousehold } from "../lib/queries/households";
 
 export const Route = createFileRoute("/")({
-  beforeLoad: requireAuth,
+  beforeLoad: async () => {
+    if (!isSupabaseConfigured) return;
+
+    await sessionReady;
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) return;
+
+    const household = await getQueryClient().fetchQuery({
+      queryKey: queryKeys.myHousehold(data.session.user.id),
+      queryFn: () => fetchMyHousehold(data.session.user.id),
+    });
+
+    if (!household) {
+      throw redirect({ to: "/onboarding" });
+    }
+
+    throw redirect({ to: "/workspace" });
+  },
   head: () => ({
     meta: [
-      { title: "רשימת קניות" },
-      { name: "description", content: "פתיחת רשימת קניות חדשה." },
+      { title: "Listo — משפחה אחת. רשימה אחת." },
+      { name: "description", content: "עוזר הקניות החכם של המשפחה שלך." },
     ],
   }),
-  component: Home,
+  component: Welcome,
 });
 
-function Home() {
-  const { state, getProduct } = useAppState();
-  const hasActive = state.selectedItems.length > 0;
-  const previewNames = state.selectedItems
-    .slice(0, 3)
-    .map((i) => getProduct(i.productId)?.name)
-    .filter(Boolean) as string[];
-  const totalQty = state.selectedItems.reduce((sum, i) => sum + i.quantity, 0);
-
+function Welcome() {
   return (
-    <section className="flex min-h-[60vh] flex-col items-center justify-center text-center" dir="rtl">
-      <h2 className="text-lg font-medium text-muted-foreground">
-        מה צריך לקנות השבוע?
-      </h2>
-      <Link
-        to="/workspace"
-        className="mt-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-b from-primary to-[var(--primary-glow)] px-8 py-3 text-base font-semibold text-primary-foreground shadow-sm ring-1 ring-primary/20 transition-all duration-200 hover:shadow-md hover:brightness-105 active:scale-[0.98]"
-      >
-        רשימה חדשה
-      </Link>
-      <Link
-        to="/history"
-        className="mt-5 text-sm text-muted-foreground underline-offset-4 hover:underline"
-      >
-        רשימות קודמות
-      </Link>
+    <div dir="rtl">
+      <div className="relative w-full" style={{ height: "440px" }}>
+        <img
+          src="/images/hero-grocery.png"
+          alt="עגלת קניות בסופרמרקט"
+          className="h-full w-full object-cover"
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(20,15,10,0) 30%, rgba(20,15,10,.75) 100%)",
+          }}
+        />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 px-12 pb-9 text-center">
+          <h1
+            className="text-white drop-shadow-lg"
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "52px",
+              fontWeight: 700,
+              letterSpacing: "0.5px",
+              textShadow: "0 2px 12px rgba(0,0,0,.3)",
+            }}
+          >
+            Listo
+          </h1>
+          <p className="mt-2 text-[19px] font-medium leading-relaxed text-[#F5EFE8]">
+            משפחה אחת. רשימה אחת. תמיד מסונכרנים.
+          </p>
+        </div>
+      </div>
 
-      {hasActive && (
-        <Link
-          to="/workspace"
-          className="mt-8 w-full max-w-md rounded-2xl border border-border/60 bg-card/80 p-5 text-right shadow-md backdrop-blur transition-all hover:shadow-lg hover:scale-[1.01]"
-        >
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <ShoppingBasket className="h-5 w-5" />
-            </div>
-            <div className="flex-1">
-              <div className="text-base font-semibold text-foreground">
-                כבר התחלת רשימה
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {totalQty} פריטים ברשימה הפעילה
-              </div>
-            </div>
+      <div className="flex flex-1 items-center justify-center px-6 pb-14 pt-10">
+        <div className="flex w-full max-w-[520px] flex-col items-center gap-6 text-center">
+          <p className="text-[15px] leading-relaxed text-[#9E9E9E]">
+            נהל את רשימת הקניות המשפחתית שלך בצורה פשוטה, חכמה ומשותפת.
+          </p>
+
+          <div className="mt-1 flex items-center gap-3">
+            <Link
+              to="/register"
+              className="rounded-[14px] bg-[#B5652F] px-10 py-3.5 text-[17px] font-bold text-white shadow-[0_4px_16px_rgba(181,101,47,.28)] transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
+            >
+              הירשם
+            </Link>
+            <Link
+              to="/login"
+              className="rounded-[14px] border-[1.5px] border-[#B5652F] bg-white px-10 py-3.5 text-[17px] font-bold text-[#B5652F] transition-all duration-200 hover:bg-[#B5652F]/5 active:scale-[0.98]"
+            >
+              התחבר
+            </Link>
           </div>
-
-          {previewNames.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {previewNames.map((name) => (
-                <span
-                  key={name}
-                  className="rounded-full bg-secondary/70 px-3 py-1 text-xs text-secondary-foreground"
-                >
-                  {name}
-                </span>
-              ))}
-              {state.selectedItems.length > previewNames.length && (
-                <span className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
-                  +{state.selectedItems.length - previewNames.length} נוספים
-                </span>
-              )}
-            </div>
-          )}
-
-          <div className="mt-4 inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow transition-transform hover:bg-primary/90 active:scale-[0.98]">
-            המשך רשימה
-          </div>
-        </Link>
-      )}
-    </section>
+        </div>
+      </div>
+    </div>
   );
 }
