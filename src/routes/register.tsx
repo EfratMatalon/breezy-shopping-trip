@@ -21,6 +21,7 @@ const MIN_PASSWORD_LENGTH = 6;
 function Register() {
   const { signUp, isConfigured } = useAuth();
   const navigate = useNavigate();
+  const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -34,6 +35,11 @@ function Register() {
     e.preventDefault();
     setError(null);
 
+    const trimmedName = firstName.trim();
+    if (!trimmedName) {
+      setError("יש להזין שם פרטי.");
+      return;
+    }
     if (password.length < MIN_PASSWORD_LENGTH) {
       setError(`הסיסמה קצרה מדי — נדרשים לפחות ${MIN_PASSWORD_LENGTH} תווים.`);
       return;
@@ -45,7 +51,7 @@ function Register() {
 
     setLoading(true);
     try {
-      const { needsConfirmation } = await signUp(email, password);
+      const { needsConfirmation } = await signUp(email, password, trimmedName);
       if (needsConfirmation) {
         // Email confirmation required — show the check-your-inbox screen.
         setAwaitingConfirmation(true);
@@ -121,6 +127,22 @@ function Register() {
       )}
 
       <form onSubmit={handleSubmit} className="mt-6 flex w-full max-w-sm flex-col gap-3">
+        <div className="text-right">
+          <label htmlFor="firstName" className="mb-1 block text-sm font-medium">
+            שם פרטי
+          </label>
+          <input
+            id="firstName"
+            type="text"
+            required
+            autoComplete="given-name"
+            maxLength={30}
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-ring"
+          />
+        </div>
+
         <div className="text-right">
           <label htmlFor="email" className="mb-1 block text-sm font-medium">
             אימייל

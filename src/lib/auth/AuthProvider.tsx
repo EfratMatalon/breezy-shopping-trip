@@ -19,7 +19,7 @@ export type AuthState = {
   user: User | null;
   loading: boolean;
   isConfigured: boolean;
-  signUp: (email: string, password: string) => Promise<SignUpResult>;
+  signUp: (email: string, password: string, firstName?: string) => Promise<SignUpResult>;
   signInWithPassword: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
@@ -56,11 +56,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user: session?.user ?? null,
       loading,
       isConfigured: isSupabaseConfigured,
-      signUp: async (email, password) => {
+      signUp: async (email, password, firstName) => {
         if (!isSupabaseConfigured) {
           throw new Error("Supabase is not configured (missing VITE_SUPABASE_* env vars)");
         }
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: firstName ? { data: { full_name: firstName } } : undefined,
+        });
         if (error) throw error;
         return { needsConfirmation: !data.session };
       },
